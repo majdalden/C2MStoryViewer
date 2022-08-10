@@ -370,6 +370,7 @@ class StoryDisplayFragment : Fragment(),
                             .setCancel(
                                 getString(R.string.cancel),
                                 true,
+//                                DialogTextStyle.Builder(activity).color(R.color.ios_like_blue).build()
                                 DialogTextStyle.Builder(activity).color(R.color.black).build()
                             )
                             .setOnDismissListener {
