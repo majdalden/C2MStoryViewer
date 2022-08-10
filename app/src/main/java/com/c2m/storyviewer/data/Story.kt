@@ -6,7 +6,10 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Parcelize
-data class Story(val url: String, val storyDate: Long) : Parcelable {
+data class Story(
+    val url: String,
+    val storyDate: Long
+) : Parcelable {
 
     //    fun isVideo() = url.contains(".mp4") || isYoutubeUrl(url)
     fun isVideo() = url.contains(".mp4")

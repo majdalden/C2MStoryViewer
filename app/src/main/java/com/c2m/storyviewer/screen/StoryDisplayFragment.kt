@@ -20,6 +20,10 @@ import com.c2m.storyviewer.utils.CacheDataSourceFactory
 import com.c2m.storyviewer.utils.OnSwipeTouchListener
 import com.c2m.storyviewer.utils.hide
 import com.c2m.storyviewer.utils.show
+import com.civitasv.ioslike.dialog.DialogBottom
+import com.civitasv.ioslike.dialog.DialogNormal
+import com.civitasv.ioslike.model.DialogText
+import com.civitasv.ioslike.model.DialogTextStyle
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
@@ -57,6 +61,14 @@ class StoryDisplayFragment : Fragment(),
     private var onResumeCalled = false
     private var onVideoPrepared = false
 
+    private var moreMenuDialogBottom: DialogBottom? = null
+    private val dialogTextItemList: List<DialogText>? = null
+    private val isAddDeleteItemToMoreMenu = true
+    private val isViewAudienceToMoreMenu = true
+    private var isAddedDialogTextItemList = false
+    private var isUserDismissMoreMenu = false
+    private val onClickDeleteStoryListener: ((position: Int) -> Unit)? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,6 +80,10 @@ class StoryDisplayFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         storyDisplayVideo.useController = false
+
+        isAddedDialogTextItemList = false
+        isUserDismissMoreMenu = false
+
         updateStory()
         setUpUi()
     }
@@ -151,6 +167,8 @@ class StoryDisplayFragment : Fragment(),
             timeInMillis = stories[counter].storyDate
         }
         storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
+
+        setupMoreMenu()
     }
 
     private fun initializePlayer() {
@@ -219,6 +237,17 @@ class StoryDisplayFragment : Fragment(),
         })
     }
 
+    fun toggleLoadMode(
+        isLoading: Boolean
+    ) {
+        if (isLoading) {
+            pressTime = System.currentTimeMillis()
+            pauseCurrentStory()
+        } else {
+            resumeCurrentStory()
+        }
+    }
+
     private fun setUpUi() {
         val touchListener = object : OnSwipeTouchListener(requireActivity()) {
             override fun onSwipeTop() {
@@ -280,6 +309,95 @@ class StoryDisplayFragment : Fragment(),
 
         Glide.with(this).load(storyUser.profilePicUrl).circleCrop().into(storyDisplayProfilePicture)
         storyDisplayNick.text = storyUser.username
+    }
+
+    private fun setupMoreMenu() {
+        if (storyUser.isShowMoreMenu) {
+            moreIV.visibility = View.VISIBLE
+            moreIV.setOnClickListener { view ->
+                setupMoreMenu(view)
+            }
+        } else {
+            moreIV.visibility = View.GONE
+        }
+    }
+
+    private fun setupMoreMenu(view: View) {
+        val activity = activity ?: return
+
+        val currentItem = position
+
+        if (moreMenuDialogBottom == null) {
+            moreMenuDialogBottom = DialogBottom(activity)
+            moreMenuDialogBottom
+                ?.setCancel(
+                    getString(R.string.cancel),
+                    true
+                )
+                ?.setOnDismissListener {
+                    if (!isUserDismissMoreMenu) {
+                        toggleLoadMode(isLoading = false)
+                    }
+                    isUserDismissMoreMenu = false
+                }
+        }
+        if (moreMenuDialogBottom != null && !isAddedDialogTextItemList) {
+            isAddedDialogTextItemList = true
+            if (dialogTextItemList != null && dialogTextItemList.isNotEmpty()) {
+                moreMenuDialogBottom?.setBottomList(dialogTextItemList)
+            }
+            if (isAddDeleteItemToMoreMenu) {
+                moreMenuDialogBottom?.addBottomItem(
+                    getString(R.string.delete),
+                    { view1 ->
+                        isUserDismissMoreMenu = true
+                        val confirmationDeleteStoryDialog = DialogNormal(activity)
+                        confirmationDeleteStoryDialog.setTitle(R.string.delete_this_story)
+                            .setContent(activity.getString(R.string.are_you_sure_you_want_to_delete_this_story))
+                            .setConfirm(
+                                getString(R.string.delete),
+                                { view2 ->
+                                    isUserDismissMoreMenu = true
+                                    confirmationDeleteStoryDialog.dismiss()
+                                    moreMenuDialogBottom?.dismiss()
+//                                        onComplete()
+                                    toggleLoadMode(isLoading = false)
+                                    onClickDeleteStoryListener?.invoke(currentItem)
+                                },
+                                DialogTextStyle.Builder(activity)
+                                    .color(R.color.ios_like_red).build()
+                            )
+                            .setCancel(
+                                getString(R.string.cancel),
+                                true,
+                                DialogTextStyle.Builder(activity).color(R.color.black).build()
+                            )
+                            .setOnDismissListener {
+                                if (!isUserDismissMoreMenu) {
+                                    toggleLoadMode(isLoading = false)
+                                }
+                                isUserDismissMoreMenu = false
+                            }
+                            .setCanceledOnTouchOutside(true)
+                        confirmationDeleteStoryDialog.show()
+                        moreMenuDialogBottom?.dismiss()
+                    },
+                    DialogTextStyle.Builder(activity).color(R.color.ios_like_red).build()
+                )
+            }
+            if (isViewAudienceToMoreMenu) {
+                moreMenuDialogBottom?.addBottomItem(
+                    getString(R.string.view_audience)
+                ) { view1 ->
+                    isUserDismissMoreMenu = true
+                    moreMenuDialogBottom?.dismiss()
+                    toggleLoadMode(isLoading = false)
+                }
+            }
+        }
+
+        toggleLoadMode(isLoading = true)
+        moreMenuDialogBottom?.show()
     }
 
     private fun showStoryOverlay() {

@@ -80,7 +80,8 @@ object StoryGenerator {
                 StoryUser(
                     "username$i",
                     userProfileUrls[Random.nextInt(userProfileUrls.size)],
-                    stories
+                    stories,
+                    Random.nextBoolean()
                 )
             )
         }

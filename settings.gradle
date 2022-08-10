@@ -1,2 +1,2 @@
 rootProject.name='StoryViewer'
-include ':app'
+include ':app', ':dialog'

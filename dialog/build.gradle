@@ -1,0 +1,192 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+//apply plugin: 'com.github.dcendents.android-maven'
+//group= 'com.github.majd_alden'
+//apply plugin: 'com.github.panpf.bintray-publish'
+
+android {
+    compileSdkVersion 31
+
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dataBinding {
+        enabled true
+    }
+    lint {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.6.1'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'com.github.majd_alden'
+                artifactId = 'android-ios-like-dialog'
+                version = '0.5.0'
+            }
+        }
+    }
+}
+
+/*ext {
+    PUBLISH_GROUP_ID = 'com.majd_alden'
+    PUBLISH_VERSION = '0.4.0'
+    PUBLISH_ARTIFACT_ID = 'androidIosLikeDialog'
+}
+
+repositories {
+    mavenCentral()
+}*/
+
+/*publishing  {
+    publications {
+        iosLike(MavenPublication) {
+            groupId 'com.majd_alden.iosLike'
+            artifactId 'dialog'
+            version '0.2.0'
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/dialog-release.aar")
+        }
+    }
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}
+
+tasks.withType(Javadoc) {
+    options{ encoding "UTF-8"
+        charSet 'UTF-8'
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+}
+
+publish {
+    repoName = 'iosLike' // repository name
+    userOrg = 'civitasv' // user name
+    groupId = 'com.majd_alden.iosLike' // 到repository一级的域名
+    artifactId = 'dialog' // package name
+    publishVersion = '0.2.0' // version
+    desc = '仿IOS制作的Android组件'
+    website = 'https://github.com/majdalden/android-ios-like-dialog'
+}*/
+
+
+/*
+plugins{
+    id('com.android.library')
+    id('maven-publish')
+    id('com.github.panpf.bintray-publish' )
+    id('com.jfrog.bintray')
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+publishing  {
+    publications {
+        iosLike(MavenPublication) {
+            groupId 'com.civitasv.iosLike'
+            artifactId 'dialog'
+            version '0.1.3'
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/dialog-release.aar")
+        }
+    }
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}
+
+tasks.withType(Javadoc) {
+    options{ encoding "UTF-8"
+        charSet 'UTF-8'
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+}
+
+publish {
+    repoName = 'iosLike' // repository name
+    userOrg = 'civitasv' // user name
+    groupId = 'com.civitasv.iosLike' // 到repository一级的域名
+    artifactId = 'dialog' // package name
+    publishVersion = '0.1.3' // version
+    desc = '仿IOS制作的Android组件'
+    website = 'https://github.com/Civitasv/iosLike'
+}*/

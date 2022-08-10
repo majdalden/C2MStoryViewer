@@ -108,4 +108,28 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/moreIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:elevation="4dp"
+        android:includeFontPadding="false"
+        android:text="@string/more"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:theme="@style/Theme.MaterialComponents.Light"
+        app:elevation="4dp"
+        app:icon="@drawable/ic_baseline_more_horiz_24"
+        app:iconGravity="top"
+        app:iconPadding="8dp"
+        app:iconSize="24dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
