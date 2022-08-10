@@ -13,22 +13,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.c2m.storyviewer.R
-import com.c2m.storyviewer.app.StoryApp
 import com.c2m.storyviewer.customview.StoriesProgressView
 import com.c2m.storyviewer.data.Story
 import com.c2m.storyviewer.data.StoryUser
+import com.c2m.storyviewer.utils.CacheDataSourceFactory
 import com.c2m.storyviewer.utils.OnSwipeTouchListener
 import com.c2m.storyviewer.utils.hide
 import com.c2m.storyviewer.utils.show
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import kotlinx.android.synthetic.main.fragment_story_display.*
 import java.util.*
 
@@ -48,7 +48,7 @@ class StoryDisplayFragment : Fragment(),
     private val stories: ArrayList<Story> by
     lazy { storyUser.stories }
 
-    private var simpleExoPlayer: SimpleExoPlayer? = null
+    private var simpleExoPlayer: ExoPlayer? = null
     private lateinit var mediaDataSourceFactory: DataSource.Factory
     private var pageViewOperator: PageViewOperator? = null
     private var counter = 0
@@ -154,27 +154,36 @@ class StoryDisplayFragment : Fragment(),
     }
 
     private fun initializePlayer() {
+        val context = context ?: return
+        val bandwidthMeter = DefaultBandwidthMeter.Builder(context)
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
+        val trackSelector = DefaultTrackSelector(context, videoTrackSelectionFactory)
+
         if (simpleExoPlayer == null) {
-            simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(requireContext())
+            simpleExoPlayer = ExoPlayer
+                .Builder(context)
+                .setTrackSelector(trackSelector)
+                .setBandwidthMeter(bandwidthMeter.build())
+                .build()
         } else {
             simpleExoPlayer?.release()
             simpleExoPlayer = null
-            simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(requireContext())
+            simpleExoPlayer = ExoPlayer
+                .Builder(context)
+                .setTrackSelector(trackSelector)
+                .setBandwidthMeter(bandwidthMeter.build())
+                .build()
         }
+//        mediaDataSourceFactory = CacheDataSourceFactory(context, 100 * 1024 * 1024, 5 * 1024 * 1024)
+        mediaDataSourceFactory =
+            CacheDataSourceFactory(context, 100 * 1024 * 1024, 100 * 1024 * 1024)
 
-        mediaDataSourceFactory = CacheDataSourceFactory(
-            StoryApp.simpleCache,
-            DefaultHttpDataSourceFactory(
-                Util.getUserAgent(
-                    context,
-                    Util.getUserAgent(requireContext(), getString(R.string.app_name))
-                )
-            )
-        )
         val mediaSource = ProgressiveMediaSource.Factory(mediaDataSourceFactory).createMediaSource(
-            Uri.parse(stories[counter].url)
+            MediaItem.fromUri(Uri.parse(stories[counter].url))
         )
-        simpleExoPlayer?.prepare(mediaSource, false, false)
+        simpleExoPlayer?.setMediaSource(mediaSource)
+        simpleExoPlayer?.prepare()
+
         if (onResumeCalled) {
             simpleExoPlayer?.playWhenReady = true
         }
@@ -182,8 +191,8 @@ class StoryDisplayFragment : Fragment(),
         storyDisplayVideo.setShutterBackgroundColor(Color.BLACK)
         storyDisplayVideo.player = simpleExoPlayer
 
-        simpleExoPlayer?.addListener(object : Player.EventListener {
-            override fun onPlayerError(error: ExoPlaybackException?) {
+        simpleExoPlayer?.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 storyDisplayVideoProgress.hide()
                 if (counter == stories.size.minus(1)) {
@@ -193,8 +202,8 @@ class StoryDisplayFragment : Fragment(),
                 }
             }
 
-            override fun onLoadingChanged(isLoading: Boolean) {
-                super.onLoadingChanged(isLoading)
+            override fun onIsLoadingChanged(isLoading: Boolean) {
+                super.onIsLoadingChanged(isLoading)
                 if (isLoading) {
                     storyDisplayVideoProgress.show()
                     pressTime = System.currentTimeMillis()
@@ -211,7 +220,7 @@ class StoryDisplayFragment : Fragment(),
     }
 
     private fun setUpUi() {
-        val touchListener = object : OnSwipeTouchListener(activity!!) {
+        val touchListener = object : OnSwipeTouchListener(requireActivity()) {
             override fun onSwipeTop() {
                 Toast.makeText(activity, "onSwipeTop", Toast.LENGTH_LONG).show()
             }

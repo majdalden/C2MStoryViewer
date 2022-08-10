@@ -19,7 +19,9 @@ import com.c2m.storyviewer.utils.StoryGenerator
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheUtil
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
@@ -116,21 +118,28 @@ class MainActivity : AppCompatActivity(),
                     ).createDataSource()
 
                 val listener =
-                    CacheUtil.ProgressListener { requestLength: Long, bytesCached: Long, _: Long ->
+                    CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
                         val downloadPercentage = (bytesCached * 100.0
                                 / requestLength)
                         Log.d("preLoadVideos", "downloadPercentage: $downloadPercentage")
                     }
 
                 try {
-                    CacheUtil.cache(
-                        dataSpec,
-                        StoryApp.simpleCache,
-                        CacheUtil.DEFAULT_CACHE_KEY_FACTORY,
-                        dataSource,
-                        listener,
-                        null
-                    )
+                    val mCacheDataSource = CacheDataSource.Factory()
+                        .setCache(StoryApp.simpleCache!!)
+                        .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
+                        .createDataSource()
+
+                    runCatching {
+                        CacheWriter(
+                            mCacheDataSource,
+                            dataSpec,
+                            null,
+                            listener
+                        ).cache()
+                    }.onFailure {
+                        it.printStackTrace()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
