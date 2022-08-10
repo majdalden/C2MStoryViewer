@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun nextPageView() {
-        if (viewPager.currentItem + 1 < viewPager.adapter?.count ?: 0) {
+        if (viewPager.currentItem + 1 < (viewPager.adapter?.count ?: 0)) {
             try {
                 fakeDrag(true)
             } catch (e: Exception) {
@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity(),
             }
         } else {
             //there is no next story
+//            finish()
             Toast.makeText(this, "All stories displayed.", Toast.LENGTH_LONG).show()
         }
     }

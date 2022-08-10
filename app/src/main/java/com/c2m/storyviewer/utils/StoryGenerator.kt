@@ -8,6 +8,7 @@ object StoryGenerator {
 
     fun generateStories(): ArrayList<StoryUser> {
         val storyUrls = ArrayList<String>()
+        storyUrls.add("https://miran-media.s3.amazonaws.com/resources/2020/03/23/CA_-_25.mp4")
         storyUrls.add("https://player.vimeo.com/external/403295268.sd.mp4?s=3446f787cefa52e7824d6ce6501db5261074d479&profile_id=165&oauth2_token_id=57447761")
         storyUrls.add("https://player.vimeo.com/external/409206405.sd.mp4?s=0bc456b6ff355d9907f285368747bf54323e5532&profile_id=165&oauth2_token_id=57447761")
         storyUrls.add("https://player.vimeo.com/external/403295710.sd.mp4?s=788b046826f92983ada6e5caf067113fdb49e209&profile_id=165&oauth2_token_id=57447761")
@@ -37,6 +38,7 @@ object StoryGenerator {
 
 
         val userProfileUrls = ArrayList<String>()
+        userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/men/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/2.jpg")
