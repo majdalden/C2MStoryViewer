@@ -8,13 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.SparseIntArray
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.upstream.BuildConfig
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
@@ -30,15 +30,10 @@ import kotlinx.coroutines.async
 class StoryViewerActivity : AppCompatActivity(),
     PageViewOperator {
 
-//    private val binding: ActivityStoryViewerBinding by lazy {
-//        ActivityStoryViewerBinding.inflate(layoutInflater)
-//    }
-
     private lateinit var binding: ActivityStoryViewerBinding
 
-    //    private lateinit var pagerAdapter: StoryPagerAdapter
     private lateinit var pagerAdapter2: FragmentStateAdapter
-    private var currentPage: Int = -1
+    private var currentPage: Int = 0
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -59,12 +54,10 @@ class StoryViewerActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStoryViewerBinding.inflate(layoutInflater)
-
-        progressState.clear()
-
         setContentView(binding.root)
 
         progressState.clear()
+
         setUpPager()
     }
 
@@ -80,7 +73,6 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     override fun backPageView() {
-//        if (binding.viewPager.currentItem > 0) {
         if (binding.viewPager2.currentItem > 0) {
             try {
                 fakeDrag(false)
@@ -91,7 +83,6 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     override fun nextPageView() {
-//        if (binding.viewPager.currentItem + 1 < (binding.viewPager.adapter?.count ?: 0)) {
         if (binding.viewPager2.currentItem + 1 < (binding.viewPager2.adapter?.itemCount ?: 0)) {
             try {
                 fakeDrag(true)
@@ -100,13 +91,12 @@ class StoryViewerActivity : AppCompatActivity(),
             }
         } else {
             //there is no next story
-//            finish()
-            Toast.makeText(this, "All stories displayed.", Toast.LENGTH_LONG).show()
+            finish()
+//            Toast.makeText(this, "All stories displayed.", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun setUpPager() {
-//        val storyUserList = StoryGenerator.generateStories()
         val storyUserList =
             intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
                 ?.toMutableList() ?: mutableListOf()
@@ -116,31 +106,11 @@ class StoryViewerActivity : AppCompatActivity(),
         }
         preLoadStories(storyUserList)
 
-//        pagerAdapter = StoryPagerAdapter(
-//            supportFragmentManager,
-//            storyUserList
-//        )
         pagerAdapter2 = StoryPager2Adapter(
             supportFragmentManager,
             lifecycle,
             storyUserList
         )
-//        binding.viewPager.adapter = pagerAdapter
-//        binding.viewPager.currentItem = currentPage
-//        binding.viewPager.setPageTransformer(
-//            true,
-//            CubeOutTransformer()
-//        )
-//        binding.viewPager.addOnPageChangeListener(object : PageChangeListener() {
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                currentPage = position
-//            }
-//
-//            override fun onPageScrollCanceled() {
-//                currentFragment()?.resumeCurrentStory()
-//            }
-//        })
 
         binding.viewPager2.isUserInputEnabled = false
         binding.viewPager2.adapter = pagerAdapter2
@@ -170,46 +140,18 @@ class StoryViewerActivity : AppCompatActivity(),
         videoList.map { data ->
             lifecycleScope.async(Dispatchers.IO) {
                 val dataUri = Uri.parse(data)
-                /*val dataSpec = DataSpec(
-                    dataUri,
-                    0,
-                    DataSpec.HTTP_METHOD_POST,
-                    null,
-                    emptyMap(),
-                    0,
-                    500 * 1024,
-                    null,
-                    0,
-                    null,
-                )*/
-
-                /*val dataSpec = DataSpec(
-                    dataUri,
-                    0,
-                    500 * 1024,
-                    null
-                )*/
-
-                /*val dataSpec = DataSpec(
-                    dataUri,
-                    0,
-                    500 * 1024,
-                )*/
-
                 val dataSpec = DataSpec
                     .Builder()
                     .setUri(dataUri)
                     .setPosition(0)
                     .setLength(500 * 1024)
                     .build()
-
                 val listener =
                     CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
                         val downloadPercentage = (bytesCached * 100.0
                                 / requestLength)
                         Log.d(TAG, "preLoadVideos downloadPercentage: $downloadPercentage")
                     }
-
                 val mCacheDataSource = CacheDataSource.Factory()
                     .setCache(StoryApp.simpleCache!!)
                     .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
@@ -223,8 +165,10 @@ class StoryViewerActivity : AppCompatActivity(),
                         listener
                     ).cache()
                 }.onFailure {
-                    Log.e(TAG, "preLoadVideos Error Message: ${it.message}")
-                    Log.e(TAG, "preLoadVideos Error Exception: ", it)
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "preLoadVideos Error Message: ${it.message}")
+                        Log.e(TAG, "preLoadVideos Error Exception: ", it)
+                    }
                 }
             }
         }

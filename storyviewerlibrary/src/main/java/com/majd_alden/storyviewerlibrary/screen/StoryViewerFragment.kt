@@ -58,10 +58,6 @@ class StoryViewerFragment : Fragment(),
     private val stories: MutableList<Story> by
     lazy { storyUser.stories }
 
-//    private var position = 0
-//    private lateinit var storyUser: StoryUser
-//    private var stories: MutableList<Story> = mutableListOf()
-
     private var simpleExoPlayer: ExoPlayer? = null
     private lateinit var mediaDataSourceFactory: DataSource.Factory
     private var pageViewOperator: PageViewOperator? = null
@@ -240,7 +236,6 @@ class StoryViewerFragment : Fragment(),
                 .setBandwidthMeter(bandwidthMeter.build())
                 .build()
         }
-//        mediaDataSourceFactory = CacheDataSourceFactory(context, 100 * 1024 * 1024, 5 * 1024 * 1024)
         mediaDataSourceFactory =
             CacheDataSourceFactory(context, 100 * 1024 * 1024, 100 * 1024 * 1024)
 
