@@ -5,6 +5,7 @@ import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import java.io.File
 
 class StoryApp : Application() {
     override fun onCreate() {
@@ -15,7 +16,11 @@ class StoryApp : Application() {
         val databaseProvider: DatabaseProvider = StandaloneDatabaseProvider(this)
 
         if (simpleCache == null) {
-            simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, databaseProvider)
+//            simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, databaseProvider)
+            simpleCache = SimpleCache(
+                File(cacheDir, "media"), leastRecentlyUsedCacheEvictor, databaseProvider
+
+            )
         }
     }
 
