@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -100,6 +101,10 @@ class StoryViewerFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
+        Log.e(TAG, "onResume")
+        if (counter >= stories.size) {
+            counter = 0
+        }
         onResumeCalled = true
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
@@ -441,6 +446,7 @@ class StoryViewerFragment : Fragment(),
     }
 
     companion object {
+        private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
         private const val EXTRA_STORY_USER = "EXTRA_STORY_USER"
         fun newInstance(position: Int, story: StoryUser): StoryViewerFragment {

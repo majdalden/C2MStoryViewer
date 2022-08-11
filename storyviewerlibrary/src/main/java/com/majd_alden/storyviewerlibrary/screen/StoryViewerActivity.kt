@@ -12,16 +12,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.majd_alden.storyviewerlibrary.app.StoryApp
-import com.majd_alden.storyviewerlibrary.customview.StoryPagerAdapter
+import com.majd_alden.storyviewerlibrary.customview.StoryPager2Adapter
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.ActivityStoryViewerBinding
-import com.majd_alden.storyviewerlibrary.utils.CubeOutTransformer
+import com.majd_alden.storyviewerlibrary.utils.CubeOutTransformer2
 import kotlinx.coroutines.async
 
 class StoryViewerActivity : AppCompatActivity(),
@@ -32,8 +34,26 @@ class StoryViewerActivity : AppCompatActivity(),
     }*/
 
     private lateinit var binding: ActivityStoryViewerBinding
-    private lateinit var pagerAdapter: StoryPagerAdapter
-    private var currentPage: Int = 0
+
+    //    private lateinit var pagerAdapter: StoryPagerAdapter
+    private lateinit var pagerAdapter2: FragmentStateAdapter
+    private var currentPage: Int = -1
+    private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            if (position == currentPage) {
+
+                return
+            }
+            currentPage = position
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            super.onPageScrollStateChanged(state)
+
+            Log.e(TAG, "onPageScrollStateChanged state: $state")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +62,20 @@ class StoryViewerActivity : AppCompatActivity(),
         setUpPager()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        binding.viewPager2.registerOnPageChangeCallback(onPageChangeCallback)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.viewPager2.unregisterOnPageChangeCallback(onPageChangeCallback)
+    }
+
     override fun backPageView() {
-        if (binding.viewPager.currentItem > 0) {
+//        if (binding.viewPager.currentItem > 0) {
+        if (binding.viewPager2.currentItem > 0) {
             try {
                 fakeDrag(false)
             } catch (e: Exception) {
@@ -53,7 +85,8 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     override fun nextPageView() {
-        if (binding.viewPager.currentItem + 1 < (binding.viewPager.adapter?.count ?: 0)) {
+//        if (binding.viewPager.currentItem + 1 < (binding.viewPager.adapter?.count ?: 0)) {
+        if (binding.viewPager2.currentItem + 1 < (binding.viewPager2.adapter?.itemCount ?: 0)) {
             try {
                 fakeDrag(true)
             } catch (e: Exception) {
@@ -77,26 +110,37 @@ class StoryViewerActivity : AppCompatActivity(),
         }
         preLoadStories(storyUserList)
 
-        pagerAdapter = StoryPagerAdapter(
+//        pagerAdapter = StoryPagerAdapter(
+//            supportFragmentManager,
+//            storyUserList
+//        )
+        pagerAdapter2 = StoryPager2Adapter(
             supportFragmentManager,
+            lifecycle,
             storyUserList
         )
-        binding.viewPager.adapter = pagerAdapter
-        binding.viewPager.currentItem = currentPage
-        binding.viewPager.setPageTransformer(
-            true,
-            CubeOutTransformer()
-        )
-        binding.viewPager.addOnPageChangeListener(object : PageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                currentPage = position
-            }
+//        binding.viewPager.adapter = pagerAdapter
+//        binding.viewPager.currentItem = currentPage
+//        binding.viewPager.setPageTransformer(
+//            true,
+//            CubeOutTransformer()
+//        )
+//        binding.viewPager.addOnPageChangeListener(object : PageChangeListener() {
+//            override fun onPageSelected(position: Int) {
+//                super.onPageSelected(position)
+//                currentPage = position
+//            }
+//
+//            override fun onPageScrollCanceled() {
+//                currentFragment()?.resumeCurrentStory()
+//            }
+//        })
 
-            override fun onPageScrollCanceled() {
-                currentFragment()?.resumeCurrentStory()
-            }
-        })
+        binding.viewPager2.isUserInputEnabled = false
+        binding.viewPager2.adapter = pagerAdapter2
+        binding.viewPager2.currentItem = currentPage
+        binding.viewPager2.setPageTransformer(CubeOutTransformer2())
+        binding.viewPager2.registerOnPageChangeCallback(onPageChangeCallback)
     }
 
     private fun preLoadStories(storyUserList: MutableList<StoryUser>) {
@@ -190,10 +234,11 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     private fun currentFragment(): StoryViewerFragment? {
-        return pagerAdapter.findFragmentByPosition(
-            binding.viewPager,
-            currentPage
-        ) as StoryViewerFragment
+        return null
+//        return pagerAdapter.findFragmentByPosition(
+//            binding.viewPager,
+//            currentPage
+//        ) as StoryViewerFragment
     }
 
     /**
@@ -205,8 +250,8 @@ class StoryViewerActivity : AppCompatActivity(),
     private var prevDragPosition = 0
 
     private fun fakeDrag(forward: Boolean) {
-        if (prevDragPosition == 0 && binding.viewPager.beginFakeDrag()) {
-            ValueAnimator.ofInt(0, binding.viewPager.width).apply {
+        if (prevDragPosition == 0 && binding.viewPager2.beginFakeDrag()) {
+            ValueAnimator.ofInt(0, binding.viewPager2.width).apply {
                 duration = 400L
                 interpolator = FastOutSlowInInterpolator()
                 addListener(object : Animator.AnimatorListener {
@@ -214,16 +259,16 @@ class StoryViewerActivity : AppCompatActivity(),
 
                     override fun onAnimationEnd(animation: Animator?) {
                         removeAllUpdateListeners()
-                        if (binding.viewPager.isFakeDragging) {
-                            binding.viewPager.endFakeDrag()
+                        if (binding.viewPager2.isFakeDragging) {
+                            binding.viewPager2.endFakeDrag()
                         }
                         prevDragPosition = 0
                     }
 
                     override fun onAnimationCancel(animation: Animator?) {
                         removeAllUpdateListeners()
-                        if (binding.viewPager.isFakeDragging) {
-                            binding.viewPager.endFakeDrag()
+                        if (binding.viewPager2.isFakeDragging) {
+                            binding.viewPager2.endFakeDrag()
                         }
                         prevDragPosition = 0
                     }
@@ -231,12 +276,12 @@ class StoryViewerActivity : AppCompatActivity(),
                     override fun onAnimationStart(p0: Animator?) {}
                 })
                 addUpdateListener {
-                    if (!binding.viewPager.isFakeDragging) return@addUpdateListener
+                    if (!binding.viewPager2.isFakeDragging) return@addUpdateListener
                     val dragPosition: Int = it.animatedValue as Int
                     val dragOffset: Float =
                         ((dragPosition - prevDragPosition) * if (forward) -1 else 1).toFloat()
                     prevDragPosition = dragPosition
-                    binding.viewPager.fakeDragBy(dragOffset)
+                    binding.viewPager2.fakeDragBy(dragOffset)
                 }
             }.start()
         }
