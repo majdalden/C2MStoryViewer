@@ -2,6 +2,7 @@ package com.majd_alden.storyviewerlibrary.screen
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -13,6 +14,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.civitasv.ioslike.dialog.DialogBottom
 import com.civitasv.ioslike.dialog.DialogNormal
 import com.civitasv.ioslike.model.DialogText
@@ -174,10 +178,46 @@ class StoryViewerFragment : Fragment(),
             binding.storyDisplayVideoProgress.show()
             initializePlayer()
         } else {
+
             binding.storyDisplayVideo.hide()
-            binding.storyDisplayVideoProgress.hide()
+//            binding.storyDisplayVideoProgress.hide()
             binding.storyDisplayImage.show()
-            Glide.with(this).load(stories[counter].url).into(binding.storyDisplayImage)
+
+            binding.storyDisplayVideoProgress.show()
+            toggleLoadMode(true)
+
+            Glide.with(this)
+                .load(stories[counter].url)
+                .addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayVideoProgress.hide()
+                        toggleLoadMode(false)
+                        if (counter == stories.size.minus(1)) {
+                            pageViewOperator?.nextPageView()
+                        } else {
+                            binding.storiesProgressView.skip()
+                        }
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayVideoProgress.hide()
+                        toggleLoadMode(false)
+                        return false
+                    }
+                })
+                .into(binding.storyDisplayImage)
         }
 
         val cal: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
@@ -245,7 +285,7 @@ class StoryViewerFragment : Fragment(),
                 } else {
                     binding.storyDisplayVideoProgress.hide()
                     binding.storiesProgressView.getProgressWithIndex(counter)
-                        ?.setDuration(simpleExoPlayer?.duration ?: 8000L)
+                        .setDuration(simpleExoPlayer?.duration ?: 8000L)
                     onVideoPrepared = true
                     resumeCurrentStory()
                 }
