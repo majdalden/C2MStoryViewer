@@ -39,6 +39,8 @@ class StoryViewerActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityStoryViewerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        progressState.clear()
         setUpPager()
     }
 
