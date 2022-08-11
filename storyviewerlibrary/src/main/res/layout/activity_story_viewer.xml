@@ -5,10 +5,20 @@
     android:layout_height="match_parent"
     tools:context="com.majd_alden.storyviewerlibrary.screen.StoryViewerActivity">
 
-    <com.majd_alden.storyviewerlibrary.customview.FixedViewPager
-        android:id="@+id/viewPager"
+    <!--
+        <com.majd_alden.storyviewerlibrary.customview.FixedViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+    -->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

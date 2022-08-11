@@ -39,14 +39,12 @@ import com.majd_alden.storyviewerlibrary.utils.CacheDataSourceFactory
 import com.majd_alden.storyviewerlibrary.utils.OnSwipeTouchListener
 import com.majd_alden.storyviewerlibrary.utils.hide
 import com.majd_alden.storyviewerlibrary.utils.show
-//import kotlinx.android.synthetic.main.fragment_story_viewer.*
 import java.util.*
 
 class StoryViewerFragment : Fragment(),
     StoriesProgressView.StoriesListener {
 
     private lateinit var binding: FragmentStoryViewerBinding
-
     private val position: Int by
     lazy { arguments?.getInt(EXTRA_POSITION) ?: 0 }
 
@@ -93,15 +91,10 @@ class StoryViewerFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.storyDisplayVideo.useController = false
 
         isAddedDialogTextItemList = false
         isUserDismissMoreMenu = false
-
-//        position = arguments?.getInt(EXTRA_POSITION) ?: 0
-//        storyUser = (arguments?.getParcelable<StoryUser>(EXTRA_STORY_USER) as StoryUser)
-//        stories = storyUser.stories
 
         updateStory()
         setUpUi()
@@ -178,12 +171,10 @@ class StoryViewerFragment : Fragment(),
             binding.storyDisplayVideoProgress.show()
             initializePlayer()
         } else {
-
             binding.storyDisplayVideo.hide()
-//            binding.storyDisplayVideoProgress.hide()
+            binding.storyDisplayVideoProgress.show()
             binding.storyDisplayImage.show()
 
-            binding.storyDisplayVideoProgress.show()
             toggleLoadMode(true)
 
             Glide.with(this)
@@ -284,7 +275,8 @@ class StoryViewerFragment : Fragment(),
                     pauseCurrentStory()
                 } else {
                     binding.storyDisplayVideoProgress.hide()
-                    binding.storiesProgressView.getProgressWithIndex(counter)
+                    binding.storiesProgressView
+                        .getProgressWithIndex(counter)
                         .setDuration(simpleExoPlayer?.duration ?: 8000L)
                     onVideoPrepared = true
                     resumeCurrentStory()
@@ -498,6 +490,7 @@ class StoryViewerFragment : Fragment(),
     }
 
     companion object {
+        private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
         private const val EXTRA_STORY_USER = "EXTRA_STORY_USER"
         fun newInstance(position: Int, story: StoryUser): StoryViewerFragment {
