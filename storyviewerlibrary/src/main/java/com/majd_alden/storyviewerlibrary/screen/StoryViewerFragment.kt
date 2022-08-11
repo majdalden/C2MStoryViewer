@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -85,8 +84,8 @@ class StoryViewerFragment : Fragment(),
         isAddedDialogTextItemList = false
         isUserDismissMoreMenu = false
 
-        updateStory()
-        setUpUi()
+//        updateStory()
+//        setUpUi()
     }
 
     override fun onAttach(context: Context) {
@@ -101,7 +100,10 @@ class StoryViewerFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
-        Log.e(TAG, "onResume")
+
+        updateStory()
+        setUpUi()
+
         if (counter >= stories.size) {
             counter = 0
         }

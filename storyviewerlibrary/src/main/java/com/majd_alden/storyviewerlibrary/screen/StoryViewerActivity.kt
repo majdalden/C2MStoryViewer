@@ -58,6 +58,9 @@ class StoryViewerActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStoryViewerBinding.inflate(layoutInflater)
+
+        progressState.clear()
+
         setContentView(binding.root)
         setUpPager()
     }
