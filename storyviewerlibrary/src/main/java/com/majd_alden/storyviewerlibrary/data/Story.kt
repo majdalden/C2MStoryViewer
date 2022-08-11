@@ -12,7 +12,7 @@ data class Story(
 ) : Parcelable {
 
     //    fun isVideo() = url.contains(".mp4") || isYoutubeUrl(url)
-    fun isVideo() = url.contains(".mp4")
+    fun isVideo() = url.contains(".mp4", ignoreCase = true)
 
     private fun getVideoIdFromYoutubeUrl(youtubeUrl: String?): String? {
         /*

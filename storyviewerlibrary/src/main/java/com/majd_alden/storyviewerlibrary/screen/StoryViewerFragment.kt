@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -39,10 +40,10 @@ import java.util.*
 class StoryViewerFragment : Fragment(),
     StoriesProgressView.StoriesListener {
 
-    private val position: Int by
-    lazy { arguments?.getInt(EXTRA_POSITION) ?: 0 }
+    /*private val position: Int by
+    lazy { arguments?.getInt(EXTRA_POSITION) ?: 0 }*/
 
-    private val storyUser: StoryUser by
+    /*private val storyUser: StoryUser by
     lazy {
         (arguments?.getParcelable<StoryUser>(
             EXTRA_STORY_USER
@@ -50,7 +51,11 @@ class StoryViewerFragment : Fragment(),
     }
 
     private val stories: MutableList<Story> by
-    lazy { storyUser.stories }
+    lazy { storyUser.stories }*/
+
+    private var position = 0
+    private lateinit var storyUser: StoryUser
+    private var stories: MutableList<Story> = mutableListOf()
 
     private var simpleExoPlayer: ExoPlayer? = null
     private lateinit var mediaDataSourceFactory: DataSource.Factory
@@ -79,10 +84,15 @@ class StoryViewerFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         storyDisplayVideo.useController = false
 
         isAddedDialogTextItemList = false
         isUserDismissMoreMenu = false
+
+        position = arguments?.getInt(EXTRA_POSITION) ?: 0
+        storyUser = (arguments?.getParcelable<StoryUser>(EXTRA_STORY_USER) as StoryUser)
+        stories = storyUser.stories
 
         updateStory()
         setUpUi()
@@ -100,6 +110,7 @@ class StoryViewerFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
+
         onResumeCalled = true
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
@@ -139,6 +150,7 @@ class StoryViewerFragment : Fragment(),
         if (stories.size <= counter + 1) {
             return
         }
+        Log.e("StoryViewerFragment", "$counter: onNext stories[counter]: ${stories[counter]}")
         ++counter
         savePosition(counter)
         updateStory()
