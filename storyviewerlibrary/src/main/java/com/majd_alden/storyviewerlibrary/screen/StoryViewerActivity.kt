@@ -24,14 +24,15 @@ import com.majd_alden.storyviewerlibrary.customview.StoryPager2Adapter
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.ActivityStoryViewerBinding
 import com.majd_alden.storyviewerlibrary.utils.CubeOutTransformer2
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class StoryViewerActivity : AppCompatActivity(),
     PageViewOperator {
 
-    /*private val binding: ActivityMainBinding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }*/
+//    private val binding: ActivityStoryViewerBinding by lazy {
+//        ActivityStoryViewerBinding.inflate(layoutInflater)
+//    }
 
     private lateinit var binding: ActivityStoryViewerBinding
 
@@ -165,7 +166,7 @@ class StoryViewerActivity : AppCompatActivity(),
 
     private fun preLoadVideos(videoList: MutableList<String>) {
         videoList.map { data ->
-            lifecycleScope.async {
+            lifecycleScope.async(Dispatchers.IO) {
                 val dataUri = Uri.parse(data)
                 /*val dataSpec = DataSpec(
                     dataUri,
@@ -204,27 +205,25 @@ class StoryViewerActivity : AppCompatActivity(),
                     CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
                         val downloadPercentage = (bytesCached * 100.0
                                 / requestLength)
-                        Log.d("preLoadVideos", "downloadPercentage: $downloadPercentage")
+                        Log.d(TAG, "preLoadVideos downloadPercentage: $downloadPercentage")
                     }
 
-                try {
-                    val mCacheDataSource = CacheDataSource.Factory()
-                        .setCache(StoryApp.simpleCache!!)
-                        .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
-                        .createDataSource()
+                val mCacheDataSource = CacheDataSource.Factory()
+                    .setCache(StoryApp.simpleCache!!)
+                    .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
+                    .createDataSource()
 
-                    runCatching {
-                        CacheWriter(
-                            mCacheDataSource,
-                            dataSpec,
-                            null,
-                            listener
-                        ).cache()
-                    }.onFailure {
-                        it.printStackTrace()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                runCatching {
+                    CacheWriter(
+                        mCacheDataSource,
+                        dataSpec,
+                        null,
+                        listener
+                    ).cache()
+                }.onFailure {
+                    Log.e(TAG, "preLoadVideos Error Message: ${it.message}")
+                    Log.e(TAG, "preLoadVideos Error Exception: ", it)
+//                        it.printStackTrace()
                 }
             }
         }

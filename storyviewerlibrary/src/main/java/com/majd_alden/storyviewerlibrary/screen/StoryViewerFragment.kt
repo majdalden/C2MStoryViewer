@@ -2,6 +2,7 @@ package com.majd_alden.storyviewerlibrary.screen
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -12,6 +13,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.civitasv.ioslike.dialog.DialogBottom
 import com.civitasv.ioslike.dialog.DialogNormal
 import com.civitasv.ioslike.model.DialogText
@@ -29,16 +33,17 @@ import com.majd_alden.storyviewerlibrary.R
 import com.majd_alden.storyviewerlibrary.customview.StoriesProgressView
 import com.majd_alden.storyviewerlibrary.data.Story
 import com.majd_alden.storyviewerlibrary.data.StoryUser
+import com.majd_alden.storyviewerlibrary.databinding.FragmentStoryViewerBinding
 import com.majd_alden.storyviewerlibrary.utils.CacheDataSourceFactory
 import com.majd_alden.storyviewerlibrary.utils.OnSwipeTouchListener
 import com.majd_alden.storyviewerlibrary.utils.hide
 import com.majd_alden.storyviewerlibrary.utils.show
-import kotlinx.android.synthetic.main.fragment_story_viewer.*
 import java.util.*
 
 class StoryViewerFragment : Fragment(),
     StoriesProgressView.StoriesListener {
 
+    private lateinit var binding: FragmentStoryViewerBinding
     private val position: Int by
     lazy { arguments?.getInt(EXTRA_POSITION) ?: 0 }
 
@@ -73,19 +78,20 @@ class StoryViewerFragment : Fragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_story_viewer, container, false)
+    ): View {
+        binding = FragmentStoryViewerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        storyDisplayVideo.useController = false
+        binding.storyDisplayVideo.useController = false
 
         isAddedDialogTextItemList = false
         isUserDismissMoreMenu = false
 
-//        updateStory()
-//        setUpUi()
+        updateStory()
+        setUpUi()
     }
 
     override fun onAttach(context: Context) {
@@ -100,13 +106,6 @@ class StoryViewerFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
-
-        updateStory()
-        setUpUi()
-
-        if (counter >= stories.size) {
-            counter = 0
-        }
         onResumeCalled = true
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
@@ -116,18 +115,18 @@ class StoryViewerFragment : Fragment(),
         simpleExoPlayer?.seekTo(5)
         simpleExoPlayer?.playWhenReady = true
         if (counter == 0) {
-            storiesProgressView?.startStories()
+            binding.storiesProgressView.startStories()
         } else {
             // restart animation
             counter = StoryViewerActivity.progressState.get(arguments?.getInt(EXTRA_POSITION) ?: 0)
-            storiesProgressView?.startStories(counter)
+            binding.storiesProgressView.startStories(counter)
         }
     }
 
     override fun onPause() {
         super.onPause()
         simpleExoPlayer?.playWhenReady = false
-        storiesProgressView?.abandon()
+        binding.storiesProgressView.abandon()
     }
 
     override fun onComplete() {
@@ -159,21 +158,57 @@ class StoryViewerFragment : Fragment(),
     private fun updateStory() {
         simpleExoPlayer?.stop()
         if (stories[counter].isVideo()) {
-            storyDisplayVideo.show()
-            storyDisplayImage.hide()
-            storyDisplayVideoProgress.show()
+            binding.storyDisplayVideo.show()
+            binding.storyDisplayImage.hide()
+            binding.storyDisplayVideoProgress.show()
             initializePlayer()
         } else {
-            storyDisplayVideo.hide()
-            storyDisplayVideoProgress.hide()
-            storyDisplayImage.show()
-            Glide.with(this).load(stories[counter].url).into(storyDisplayImage)
+            binding.storyDisplayVideo.hide()
+            binding.storyDisplayVideoProgress.hide()
+            binding.storyDisplayVideoProgress.show()
+            binding.storyDisplayImage.show()
+
+            toggleLoadMode(true)
+
+            Glide.with(this)
+                .load(stories[counter].url)
+                .addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayVideoProgress.hide()
+                        toggleLoadMode(false)
+                        if (counter == stories.size.minus(1)) {
+                            pageViewOperator?.nextPageView()
+                        } else {
+                            binding.storiesProgressView.skip()
+                        }
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayVideoProgress.hide()
+                        toggleLoadMode(false)
+                        return false
+                    }
+
+                })
+                .into(binding.storyDisplayImage)
         }
 
         val cal: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
             timeInMillis = stories[counter].storyDate
         }
-        storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
+        binding.storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
 
         setupMoreMenu()
     }
@@ -213,29 +248,29 @@ class StoryViewerFragment : Fragment(),
             simpleExoPlayer?.playWhenReady = true
         }
 
-        storyDisplayVideo.setShutterBackgroundColor(Color.BLACK)
-        storyDisplayVideo.player = simpleExoPlayer
+        binding.storyDisplayVideo.setShutterBackgroundColor(Color.BLACK)
+        binding.storyDisplayVideo.player = simpleExoPlayer
 
         simpleExoPlayer?.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
-                storyDisplayVideoProgress.hide()
+                binding.storyDisplayVideoProgress.hide()
                 if (counter == stories.size.minus(1)) {
                     pageViewOperator?.nextPageView()
                 } else {
-                    storiesProgressView?.skip()
+                    binding.storiesProgressView.skip()
                 }
             }
 
             override fun onIsLoadingChanged(isLoading: Boolean) {
                 super.onIsLoadingChanged(isLoading)
                 if (isLoading) {
-                    storyDisplayVideoProgress.show()
+                    binding.storyDisplayVideoProgress.show()
                     pressTime = System.currentTimeMillis()
                     pauseCurrentStory()
                 } else {
-                    storyDisplayVideoProgress.hide()
-                    storiesProgressView?.getProgressWithIndex(counter)
+                    binding.storyDisplayVideoProgress.hide()
+                    binding.storiesProgressView.getProgressWithIndex(counter)
                         ?.setDuration(simpleExoPlayer?.duration ?: 8000L)
                     onVideoPrepared = true
                     resumeCurrentStory()
@@ -267,18 +302,18 @@ class StoryViewerFragment : Fragment(),
 
             override fun onClick(view: View) {
                 when (view) {
-                    next -> {
+                    binding.next -> {
                         if (counter == stories.size - 1) {
                             pageViewOperator?.nextPageView()
                         } else {
-                            storiesProgressView?.skip()
+                            binding.storiesProgressView.skip()
                         }
                     }
-                    previous -> {
+                    binding.previous -> {
                         if (counter == 0) {
                             pageViewOperator?.backPageView()
                         } else {
-                            storiesProgressView?.reverse()
+                            binding.storiesProgressView.reverse()
                         }
                     }
                 }
@@ -305,27 +340,28 @@ class StoryViewerFragment : Fragment(),
                 return false
             }
         }
-        previous.setOnTouchListener(touchListener)
-        next.setOnTouchListener(touchListener)
+        binding.previous.setOnTouchListener(touchListener)
+        binding.next.setOnTouchListener(touchListener)
 
-        storiesProgressView?.setStoriesCountDebug(
+        binding.storiesProgressView.setStoriesCountDebug(
             stories.size, position = arguments?.getInt(EXTRA_POSITION) ?: -1
         )
-        storiesProgressView?.setAllStoryDuration(4000L)
-        storiesProgressView?.setStoriesListener(this)
+        binding.storiesProgressView.setAllStoryDuration(4000L)
+        binding.storiesProgressView.setStoriesListener(this)
 
-        Glide.with(this).load(storyUser.profilePicUrl).circleCrop().into(storyDisplayProfilePicture)
-        storyDisplayNick.text = storyUser.username
+        Glide.with(this).load(storyUser.profilePicUrl).circleCrop()
+            .into(binding.storyDisplayProfilePicture)
+        binding.storyDisplayNick.text = storyUser.username
     }
 
     private fun setupMoreMenu() {
         if (storyUser.isShowMoreMenu) {
-            moreIV.visibility = View.VISIBLE
-            moreIV.setOnClickListener { view ->
+            binding.moreIV.visibility = View.VISIBLE
+            binding.moreIV.setOnClickListener { view ->
                 setupMoreMenu(view)
             }
         } else {
-            moreIV.visibility = View.GONE
+            binding.moreIV.visibility = View.GONE
         }
     }
 
@@ -409,18 +445,18 @@ class StoryViewerFragment : Fragment(),
     }
 
     private fun showStoryOverlay() {
-        if (storyOverlay == null || storyOverlay.alpha != 0F) return
+        if (binding.storyOverlay == null || binding.storyOverlay.alpha != 0F) return
 
-        storyOverlay.animate()
+        binding.storyOverlay.animate()
             .setDuration(100)
             .alpha(1F)
             .start()
     }
 
     private fun hideStoryOverlay() {
-        if (storyOverlay == null || storyOverlay.alpha != 1F) return
+        if (binding.storyOverlay == null || binding.storyOverlay.alpha != 1F) return
 
-        storyOverlay.animate()
+        binding.storyOverlay.animate()
             .setDuration(200)
             .alpha(0F)
             .start()
@@ -436,14 +472,14 @@ class StoryViewerFragment : Fragment(),
 
     fun pauseCurrentStory() {
         simpleExoPlayer?.playWhenReady = false
-        storiesProgressView?.pause()
+        binding.storiesProgressView.pause()
     }
 
     fun resumeCurrentStory() {
         if (onResumeCalled) {
             simpleExoPlayer?.playWhenReady = true
             showStoryOverlay()
-            storiesProgressView?.resume()
+            binding.storiesProgressView.resume()
         }
     }
 
