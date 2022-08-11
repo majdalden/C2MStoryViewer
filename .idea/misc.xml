@@ -12,6 +12,13 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_story_display.xml" value="0.3651041666666667" />
         <entry key="dialog/src/main/res/layout/item_dialog_bottom.xml" value="0.19927536231884058" />
+        <entry key="storyviewer/src/main/res/layout/activity_main.xml" value="0.2617753623188406" />
+        <entry key="storyviewer/src/main/res/layout/fragment_story_display.xml" value="0.2617753623188406" />
+        <entry key="storyviewer/src/main/res/layout/pausable_progress.xml" value="0.2617753623188406" />
+        <entry key="storyviewerlibrary/src/main/res/layout/activity_main.xml" value="0.15104166666666666" />
+        <entry key="storyviewerlibrary/src/main/res/layout/activity_story_viewer.xml" value="0.1" />
+        <entry key="storyviewerlibrary/src/main/res/layout/fragment_story_display.xml" value="0.18854166666666666" />
+        <entry key="storyviewerlibrary/src/main/res/layout/fragment_story_viewer.xml" value="0.19927536231884058" />
       </map>
     </option>
   </component>

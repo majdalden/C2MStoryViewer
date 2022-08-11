@@ -1,13 +1,3 @@
 <resources>
-    <string name="app_tag" translatable="false">StoryViewer</string>
-
     <string name="app_name">StoryViewer</string>
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
-    <string name="view_audience">View Audience</string>
-    <string name="more">More</string>
-    <string name="options">Options</string>
-    <string name="delete_this_story">Delete this story?</string>
-    <string name="are_you_sure_you_want_to_delete_this_story">Are you sure you want to delete this story?</string>
-
 </resources>
