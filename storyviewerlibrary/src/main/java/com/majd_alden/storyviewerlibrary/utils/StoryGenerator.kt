@@ -6,8 +6,8 @@ import kotlin.random.Random
 
 object StoryGenerator {
 
-    fun generateStories(): ArrayList<StoryUser> {
-        val storyUrls = ArrayList<String>()
+    fun generateStories(): MutableList<StoryUser> {
+        val storyUrls = mutableListOf<String>()
         storyUrls.add("https://miran-media.s3.amazonaws.com/resources/2020/03/23/CA_-_25.mp4")
 //        storyUrls.add("https://www.youtube.com/watch?v=V1t0WOUl8Vk")
         storyUrls.add("https://player.vimeo.com/external/403295268.sd.mp4?s=3446f787cefa52e7824d6ce6501db5261074d479&profile_id=165&oauth2_token_id=57447761")
@@ -38,7 +38,7 @@ object StoryGenerator {
         storyUrls.add("https://images.pexels.com/photos/2458400/pexels-photo-2458400.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260")
 
 
-        val userProfileUrls = ArrayList<String>()
+        val userProfileUrls = mutableListOf<String>()
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
@@ -64,9 +64,9 @@ object StoryGenerator {
         userProfileUrls.add("https://randomuser.me/api/portraits/women/11.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/men/11.jpg")
 
-        val storyUserList = ArrayList<StoryUser>()
+        val storyUserList = mutableListOf<StoryUser>()
         for (i in 1..10) {
-            val stories = ArrayList<Story>()
+            val stories = mutableListOf<Story>()
             val storySize = Random.nextInt(1, 5)
             for (j in 0 until storySize) {
                 stories.add(

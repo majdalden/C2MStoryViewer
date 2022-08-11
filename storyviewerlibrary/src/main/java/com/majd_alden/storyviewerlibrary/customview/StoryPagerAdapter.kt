@@ -9,7 +9,7 @@ import com.majd_alden.storyviewerlibrary.screen.StoryViewerFragment
 
 class StoryPagerAdapter constructor(
     fragmentManager: FragmentManager,
-    private val storyList: ArrayList<StoryUser>
+    private val storyList: MutableList<StoryUser>
 ) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment =

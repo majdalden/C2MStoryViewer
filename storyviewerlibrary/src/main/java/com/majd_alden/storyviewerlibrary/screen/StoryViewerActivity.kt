@@ -91,7 +91,7 @@ class StoryViewerActivity : AppCompatActivity(),
         })
     }
 
-    private fun preLoadStories(storyUserList: ArrayList<StoryUser>) {
+    private fun preLoadStories(storyUserList: MutableList<StoryUser>) {
         val imageList = mutableListOf<String>()
         val videoList = mutableListOf<String>()
 

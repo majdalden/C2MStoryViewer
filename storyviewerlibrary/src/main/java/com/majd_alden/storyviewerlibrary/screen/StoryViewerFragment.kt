@@ -49,7 +49,7 @@ class StoryViewerFragment : Fragment(),
         ) as StoryUser)
     }
 
-    private val stories: ArrayList<Story> by
+    private val stories: MutableList<Story> by
     lazy { storyUser.stories }
 
     private var simpleExoPlayer: ExoPlayer? = null

@@ -12,7 +12,7 @@ class StoriesProgressView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : LinearLayout(context, attrs, defStyle) {
 
-    private val progressBars: MutableList<PausableProgressBar> = ArrayList()
+    private val progressBars: MutableList<PausableProgressBar> = mutableListOf()
     private var storiesListener: StoriesListener? = null
     private var storiesCount = -1
     private var current = -1
