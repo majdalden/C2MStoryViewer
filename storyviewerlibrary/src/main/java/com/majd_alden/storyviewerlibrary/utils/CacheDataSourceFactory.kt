@@ -13,7 +13,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.majd_alden.storyviewerlibrary.R
-import com.majd_alden.storyviewerlibrary.app.StoryApp
+import com.majd_alden.storyviewerlibrary.screen.StoryViewerActivity
 import java.io.File
 
 
@@ -33,23 +33,23 @@ class CacheDataSourceFactory(context: Context, maxCacheSize: Long, maxFileSize: 
 //        val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(90 * 1024 * 1024)
 //        val databaseProvider: DatabaseProvider = ExoDatabaseProvider(this)
         val databaseProvider: DatabaseProvider = StandaloneDatabaseProvider(context)
-        if (StoryApp.simpleCache == null) {
-            StoryApp.simpleCache = SimpleCache(
+        if (StoryViewerActivity.simpleCache == null) {
+            StoryViewerActivity.simpleCache = SimpleCache(
                 File(context.cacheDir, "media"), leastRecentlyUsedCacheEvictor, databaseProvider
             )
-//            StoryApp.simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, databaseProvider)
+//            StoryViewerActivity.simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, databaseProvider)
         }
 
         return CacheDataSource(
-            StoryApp.simpleCache!!, defaultDatasourceFactory.createDataSource(),
-            FileDataSource(), CacheDataSink(StoryApp.simpleCache!!, maxFileSize),
+            StoryViewerActivity.simpleCache!!, defaultDatasourceFactory.createDataSource(),
+            FileDataSource(), CacheDataSink(StoryViewerActivity.simpleCache!!, maxFileSize),
             CacheDataSource.FLAG_BLOCK_ON_CACHE or CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null
         )
     }
 
     fun delete(context: Context?) {
         try {
-            StoryApp.simpleCache?.release()
+            StoryViewerActivity.simpleCache?.release()
         } catch (e: Exception) {
             e.printStackTrace()
         }

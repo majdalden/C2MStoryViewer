@@ -14,18 +14,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.database.DatabaseProvider
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.BuildConfig
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheWriter
-import com.majd_alden.storyviewerlibrary.app.StoryApp
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.majd_alden.storyviewerlibrary.customview.StoryPager2Adapter
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.ActivityStoryViewerBinding
 import com.majd_alden.storyviewerlibrary.utils.CubeOutTransformer2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import java.io.File
 
 class StoryViewerActivity : AppCompatActivity(),
     PageViewOperator {
@@ -55,6 +59,8 @@ class StoryViewerActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityStoryViewerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        createCacheIfIsNull(applicationContext)
 
         progressState.clear()
 
@@ -153,7 +159,7 @@ class StoryViewerActivity : AppCompatActivity(),
                         Log.d(TAG, "preLoadVideos downloadPercentage: $downloadPercentage")
                     }
                 val mCacheDataSource = CacheDataSource.Factory()
-                    .setCache(StoryApp.simpleCache!!)
+                    .setCache(simpleCache!!)
                     .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
                     .createDataSource()
 
@@ -235,10 +241,28 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     companion object {
-        val progressState = SparseIntArray()
 
         private const val TAG = "StoryViewerActivity"
         private const val ARG_STORIES_USERS_LIST = "STORIES_USERS_LIST"
+
+        var simpleCache: SimpleCache? = null
+        val progressState = SparseIntArray()
+
+        fun createCacheIfIsNull(context: Context?) {
+            if (simpleCache == null && context != null) {
+                val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(90 * 1024 * 1024)
+                val databaseProvider: DatabaseProvider = StandaloneDatabaseProvider(context)
+
+                simpleCache = SimpleCache(
+                    File(
+                        context.cacheDir,
+                        "media"
+                    ),
+                    leastRecentlyUsedCacheEvictor,
+                    databaseProvider
+                )
+            }
+        }
 
         fun newInstance(
             context: Context,
