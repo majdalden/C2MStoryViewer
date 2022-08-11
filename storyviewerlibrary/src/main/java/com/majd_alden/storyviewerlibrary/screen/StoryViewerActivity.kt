@@ -51,7 +51,9 @@ class StoryViewerActivity : AppCompatActivity(),
         override fun onPageScrollStateChanged(state: Int) {
             super.onPageScrollStateChanged(state)
 
-            Log.e(TAG, "onPageScrollStateChanged state: $state")
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "onPageScrollStateChanged state: $state")
+            }
         }
     }
 
@@ -156,7 +158,9 @@ class StoryViewerActivity : AppCompatActivity(),
                     CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
                         val downloadPercentage = (bytesCached * 100.0
                                 / requestLength)
-                        Log.d(TAG, "preLoadVideos downloadPercentage: $downloadPercentage")
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG, "preLoadVideos downloadPercentage: $downloadPercentage")
+                        }
                     }
                 val mCacheDataSource = CacheDataSource.Factory()
                     .setCache(simpleCache!!)

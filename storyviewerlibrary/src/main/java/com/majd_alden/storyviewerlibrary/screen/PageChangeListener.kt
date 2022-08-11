@@ -3,6 +3,7 @@ package com.majd_alden.storyviewerlibrary.screen
 import android.os.Handler
 import android.util.Log
 import androidx.viewpager.widget.ViewPager.*
+import com.google.android.exoplayer2.upstream.BuildConfig
 
 abstract class PageChangeListener : OnPageChangeListener {
 
@@ -13,7 +14,9 @@ abstract class PageChangeListener : OnPageChangeListener {
     override fun onPageScrollStateChanged(state: Int) {
         when (state) {
             SCROLL_STATE_IDLE -> {
-                Log.d("onPageScrollState", " SCROLL_STATE_IDLE")
+                if (BuildConfig.DEBUG) {
+                    Log.d("onPageScrollState", " SCROLL_STATE_IDLE")
+                }
                 val now = System.currentTimeMillis()
                 if (now - lastTime < DEBOUNCE_TIMES) {
                     return
@@ -26,11 +29,16 @@ abstract class PageChangeListener : OnPageChangeListener {
                 }, 300L)
             }
             SCROLL_STATE_DRAGGING -> {
-                Log.d("onPageScrollState", " SCROLL_STATE_DRAGGING")
+                if (BuildConfig.DEBUG) {
+
+                    Log.d("onPageScrollState", " SCROLL_STATE_DRAGGING")
+                }
                 pageBeforeDragging = currentPage
             }
             SCROLL_STATE_SETTLING -> {
-                Log.d("onPageScrollState", " SCROLL_STATE_SETTLING")
+                if (BuildConfig.DEBUG) {
+                    Log.d("onPageScrollState", " SCROLL_STATE_SETTLING")
+                }
             }
         }
     }
@@ -39,7 +47,9 @@ abstract class PageChangeListener : OnPageChangeListener {
     }
 
     override fun onPageSelected(position: Int) {
-        Log.d("onPageScrollState", "onPageSelected(): position($position)")
+        if (BuildConfig.DEBUG) {
+            Log.d("onPageScrollState", "onPageSelected(): position($position)")
+        }
         currentPage = position
     }
 

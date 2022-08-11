@@ -11,6 +11,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.civitasv.dialog.BuildConfig;
+
 import java.util.Objects;
 
 /**
@@ -34,7 +36,9 @@ public class DialogBottomItemDecoration extends RecyclerView.ItemDecoration {
         TypedArray a = context.obtainStyledAttributes(ATTRS);
         this.mDivider = a.getDrawable(0);
         if (this.mDivider == null) {
-            Log.w("DividerItem", "@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()");
+            if (BuildConfig.DEBUG) {
+                Log.w("DividerItem", "@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()");
+            }
         }
         a.recycle();
     }

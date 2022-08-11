@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.BuildConfig
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.majd_alden.storyviewerlibrary.R
@@ -148,7 +149,9 @@ class StoryViewerFragment : Fragment(),
         if (stories.size <= counter + 1) {
             return
         }
-        Log.e("StoryViewerFragment", "$counter: onNext stories[counter]: ${stories[counter]}")
+        if (BuildConfig.DEBUG) {
+            Log.e("StoryViewerFragment", "$counter: onNext stories[counter]: ${stories[counter]}")
+        }
         ++counter
         savePosition(counter)
         updateStory()
