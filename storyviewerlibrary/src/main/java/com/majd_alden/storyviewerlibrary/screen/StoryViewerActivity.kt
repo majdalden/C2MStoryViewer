@@ -2,6 +2,8 @@ package com.majd_alden.storyviewerlibrary.screen
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +22,6 @@ import com.majd_alden.storyviewerlibrary.customview.StoryPagerAdapter
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.ActivityStoryViewerBinding
 import com.majd_alden.storyviewerlibrary.utils.CubeOutTransformer
-import com.majd_alden.storyviewerlibrary.utils.StoryGenerator
 import kotlinx.coroutines.async
 
 class StoryViewerActivity : AppCompatActivity(),
@@ -66,7 +67,14 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     private fun setUpPager() {
-        val storyUserList = StoryGenerator.generateStories()
+//        val storyUserList = StoryGenerator.generateStories()
+        val storyUserList =
+            intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
+                ?.toMutableList() ?: mutableListOf()
+        if (storyUserList.isEmpty()) {
+            finish()
+            return
+        }
         preLoadStories(storyUserList)
 
         pagerAdapter = StoryPagerAdapter(
@@ -236,5 +244,26 @@ class StoryViewerActivity : AppCompatActivity(),
 
     companion object {
         val progressState = SparseIntArray()
+
+        private const val TAG = "StoryViewerActivity"
+        private const val ARG_STORIES_USERS_LIST = "STORIES_USERS_LIST"
+
+        fun newInstance(
+            context: Context,
+            storiesUsersList: MutableList<StoryUser>,
+        ): Intent {
+            return newInstance(context, ArrayList(storiesUsersList))
+        }
+
+        fun newInstance(
+            context: Context,
+            storiesUsersList: ArrayList<StoryUser>,
+        ): Intent {
+            val storyViewerActivityIntent = Intent(context, StoryViewerActivity::class.java)
+            val args = Bundle()
+            args.putParcelableArrayList(ARG_STORIES_USERS_LIST, ArrayList(storiesUsersList))
+            storyViewerActivityIntent.putExtras(args)
+            return storyViewerActivityIntent
+        }
     }
 }
