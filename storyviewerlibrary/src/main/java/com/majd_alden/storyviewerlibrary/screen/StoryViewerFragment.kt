@@ -117,6 +117,7 @@ class StoryViewerFragment : Fragment(),
         counter = restorePosition()
     }
 
+
     override fun onResume() {
         super.onResume()
 
