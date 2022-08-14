@@ -26,6 +26,7 @@ open class OnSwipeTouchListener(context: Activity) : View.OnTouchListener {
                 touchDownTime = now()
                 startX = event.x
                 startY = event.y
+
             }
             MotionEvent.ACTION_UP -> {
                 val endX = event.x
@@ -47,6 +48,16 @@ open class OnSwipeTouchListener(context: Activity) : View.OnTouchListener {
     }
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        override fun onScroll(
+            e1: MotionEvent?,
+            e2: MotionEvent?,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
+            return super.onScroll(e1, e2, distanceX, distanceY)
+
+        }
 
         override fun onDown(e: MotionEvent): Boolean {
             return true

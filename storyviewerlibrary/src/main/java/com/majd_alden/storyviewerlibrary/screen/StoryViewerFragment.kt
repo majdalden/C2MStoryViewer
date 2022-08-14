@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
@@ -95,6 +94,8 @@ class StoryViewerFragment : Fragment(),
 
         updateStory()
         setUpUi()
+
+        binding.closeBtn.setOnClickListener { activity?.finish() }
     }
 
     override fun onAttach(context: Context) {
@@ -297,11 +298,12 @@ class StoryViewerFragment : Fragment(),
     private fun setUpUi() {
         val touchListener = object : OnSwipeTouchListener(requireActivity()) {
             override fun onSwipeTop() {
-                Toast.makeText(activity, "onSwipeTop", Toast.LENGTH_LONG).show()
+//                Toast.makeText(activity, "onSwipeTop", Toast.LENGTH_LONG).show()
             }
 
             override fun onSwipeBottom() {
-                Toast.makeText(activity, "onSwipeBottom", Toast.LENGTH_LONG).show()
+                activity?.finish()
+//                Toast.makeText(activity, "onSwipeBottom", Toast.LENGTH_LONG).show()
             }
 
             override fun onClick(view: View) {
@@ -353,7 +355,9 @@ class StoryViewerFragment : Fragment(),
         binding.storiesProgressView.setAllStoryDuration(4000L)
         binding.storiesProgressView.setStoriesListener(this)
 
-        Glide.with(this).load(storyUser.profilePicUrl).circleCrop()
+        Glide.with(this)
+            .load(storyUser.profilePicUrl)
+            .circleCrop()
             .into(binding.storyDisplayProfilePicture)
         binding.storyDisplayNick.text = storyUser.username
     }

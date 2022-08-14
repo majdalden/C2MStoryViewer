@@ -13,26 +13,24 @@ class StoryPager2Adapter constructor(
     private val storyList: MutableList<StoryUser>
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    /*override fun getItem(position: Int): Fragment =
-        StoryViewerFragment.newInstance(position, storyList[position])
+    private val storyFragmentList = mutableListOf<StoryViewerFragment>()
 
-    override fun getCount(): Int {
-        return storyList.size
+    fun findFragmentByPosition(position: Int): Fragment? {
+        if (position < 0 || position >= storyFragmentList.size) {
+            return null
+        }
+        return storyFragmentList[position]
     }
 
-    fun findFragmentByPosition(viewPager: ViewPager, position: Int): Fragment? {
-        try {
-            val f = instantiateItem(viewPager, position)
-            return f as? Fragment
-        } finally {
-            finishUpdate(viewPager)
-        }
-    }*/
     override fun getItemCount(): Int {
         return storyList.size
     }
 
     override fun createFragment(position: Int): Fragment {
-        return StoryViewerFragment.newInstance(position, storyList[position])
+        val fragment = StoryViewerFragment.newInstance(position, storyList[position])
+        storyFragmentList.add(fragment)
+        return fragment
     }
+
+
 }

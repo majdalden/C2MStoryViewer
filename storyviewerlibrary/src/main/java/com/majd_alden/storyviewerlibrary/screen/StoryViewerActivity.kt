@@ -11,7 +11,6 @@ import android.util.SparseIntArray
 import androidx.appcompat.app.AppCompatActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.database.DatabaseProvider
@@ -23,6 +22,8 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.majd_alden.storyviewerlibrary.callback.TouchCallbacks
+import com.majd_alden.storyviewerlibrary.customview.PullDismissLayout
 import com.majd_alden.storyviewerlibrary.customview.StoryPager2Adapter
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.ActivityStoryViewerBinding
@@ -36,24 +37,16 @@ class StoryViewerActivity : AppCompatActivity(),
 
     private lateinit var binding: ActivityStoryViewerBinding
 
-    private lateinit var pagerAdapter2: FragmentStateAdapter
+    private lateinit var pagerAdapter2: StoryPager2Adapter
     private var currentPage: Int = 0
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
             if (position == currentPage) {
-
+                currentFragment()?.resumeCurrentStory()
                 return
             }
             currentPage = position
-        }
-
-        override fun onPageScrollStateChanged(state: Int) {
-            super.onPageScrollStateChanged(state)
-
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "onPageScrollStateChanged state: $state")
-            }
         }
     }
 
@@ -67,6 +60,18 @@ class StoryViewerActivity : AppCompatActivity(),
         progressState.clear()
 
         setUpPager()
+
+        binding.rootPDL.setListener(object : PullDismissLayout.Listener {
+            override fun onDismissed() {
+                finish()
+            }
+        })
+
+        binding.rootPDL.setmTouchCallbacks(object : TouchCallbacks {
+            override fun touchUp() {
+                currentFragment()?.resumeCurrentStory()
+            }
+        })
     }
 
     override fun onResume() {
@@ -191,11 +196,7 @@ class StoryViewerActivity : AppCompatActivity(),
     }
 
     private fun currentFragment(): StoryViewerFragment? {
-        return null
-//        return pagerAdapter.findFragmentByPosition(
-//            binding.viewPager,
-//            currentPage
-//        ) as StoryViewerFragment
+        return pagerAdapter2.findFragmentByPosition(currentPage) as? StoryViewerFragment?
     }
 
     /**
