@@ -111,7 +111,7 @@ class StoryViewerActivity : AppCompatActivity(),
 
     private fun setUpPager() {
         val storyUserList =
-            intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
+                intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
                 ?.toMutableList() ?: mutableListOf()
         if (storyUserList.isEmpty()) {
             finish()
@@ -284,6 +284,7 @@ class StoryViewerActivity : AppCompatActivity(),
         ): Intent {
             val storyViewerActivityIntent = Intent(context, StoryViewerActivity::class.java)
             val args = Bundle()
+//            args.putParcelableArrayList(ARG_STORIES_USERS_LIST, ArrayList(storiesUsersList))
             args.putParcelableArrayList(ARG_STORIES_USERS_LIST, ArrayList(storiesUsersList))
             storyViewerActivityIntent.putExtras(args)
             return storyViewerActivityIntent

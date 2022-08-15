@@ -1,12 +1,50 @@
 package com.majd_alden.storyviewerlibrary.data
 
+import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import com.google.gson.Gson
 
-@Parcelize
 data class StoryUser(
     val username: String,
     val profilePicUrl: String,
     val stories: MutableList<Story>,
     val isShowMoreMenu: Boolean = false
-) : Parcelable
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        username = parcel.readString() ?: "",
+        profilePicUrl = parcel.readString() ?: "",
+//        stories = parcel.readArrayList(Story::class.java.classLoader)
+//            ?.toMutableList() as? MutableList<Story>? ?: mutableListOf(),
+//        stories= mutableListOf(),
+//        stories = parcel.readParcelableArray(Story::class.java.classLoader)?.toMutableList()
+//                as? MutableList<Story>? ?: mutableListOf(),
+//        stories = parcel.readList2(mutableListOf<Story>(), Story::class.java.classLoader)
+//            .toMutableList(),
+        stories = Gson().fromJson(
+            parcel.readString() ?: "", Array<Story>::class.java
+        )?.toMutableList() ?: mutableListOf(),
+        isShowMoreMenu = parcel.readByte() != 0.toByte()
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(username)
+        parcel.writeString(profilePicUrl)
+//        parcel.writeList(stories)
+        parcel.writeString(Gson().toJson(stories.toTypedArray()))
+        parcel.writeByte(if (isShowMoreMenu) 1 else 0)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<StoryUser> {
+        override fun createFromParcel(parcel: Parcel): StoryUser {
+            return StoryUser(parcel)
+        }
+
+        override fun newArray(size: Int): Array<StoryUser?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

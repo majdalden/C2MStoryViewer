@@ -1,10 +1,10 @@
 package com.majd_alden.storyviewerlibrary.data
 
 import android.graphics.Typeface
+import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import com.google.gson.Gson
 
-@Parcelize
 data class Story(
     val storyType: StoryType,
     val storyUrl: String = "",
@@ -18,48 +18,89 @@ data class Story(
     val storyDate: Long
 ) : Parcelable {
 
-    ////    fun isVideo() = url.contains(".mp4") || isYoutubeUrl(url)
-//    fun isVideo() = url.contains(".mp4", ignoreCase = true)
+    /*constructor(parcel: Parcel) : this(
+        storyType = parcel.readString()?.let { StoryType.valueOf(it) }
+            ?: StoryType.IMAGE,
+        storyUrl = if (storyType != StoryType.TEXT) parcel.readString() ?: "" else "",
+        storyText = parcel.readString() ?: "",
+        storyTextFont = parcel.readString()?.let { StoryTextFont.valueOf(it) }
+            ?: StoryTextFont.DEFAULT,
+        storyTextBackgroundColor = parcel.readString() ?: "",
+        storyTextColor = parcel.readString() ?: "",
+        storyTextTypeface = parcel.readString()?.let {
+            try {
+                Gson().fromJson(it, Typeface::class.java)
+            } catch (e: Exception) {
+                null
+            }
+        },
+        maxStoryTextLength = parcel.readInt(),
+        maxStoryTextLines = parcel.readInt(),
+        storyDate = parcel.readLong()
+    ) {
+    }*/
+
+    constructor(parcel: Parcel) : this(
+        storyType = parcel.readString()?.let { StoryType.valueOf(it) }
+            ?: StoryType.IMAGE,
+        parcel = parcel
+    )
+
+    constructor(storyType: StoryType, parcel: Parcel) : this(
+        storyType = storyType,
+        storyUrl = if (storyType != StoryType.TEXT) parcel.readString() ?: "" else "",
+        storyText = if (storyType == StoryType.TEXT) parcel.readString() ?: "" else "",
+        storyTextFont = if (storyType == StoryType.TEXT) parcel.readString()
+            ?.let { StoryTextFont.valueOf(it) }
+            ?: StoryTextFont.DEFAULT else StoryTextFont.DEFAULT,
+        storyTextBackgroundColor = if (storyType == StoryType.TEXT) parcel.readString()
+            ?: "" else "",
+        storyTextColor = if (storyType == StoryType.TEXT) parcel.readString() ?: "" else "",
+        storyTextTypeface = if (storyType == StoryType.TEXT) parcel.readString()?.let {
+            try {
+                Gson().fromJson(it, Typeface::class.java)
+            } catch (e: Exception) {
+                null
+            }
+        } else null,
+        maxStoryTextLength = parcel.readInt(),
+        maxStoryTextLines = parcel.readInt(),
+        storyDate = parcel.readLong()
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(storyType.toString())
+        if (storyType == StoryType.TEXT) {
+            parcel.writeString(storyText)
+            parcel.writeString(storyTextBackgroundColor)
+            parcel.writeString(storyTextColor)
+            if (storyTextTypeface != null) {
+                parcel.writeString(Gson().toJson(storyTextTypeface))
+            }
+            parcel.writeInt(maxStoryTextLength)
+            parcel.writeInt(maxStoryTextLines)
+        } else {
+            parcel.writeString(storyUrl)
+        }
+        parcel.writeLong(storyDate)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Story> {
+        override fun createFromParcel(parcel: Parcel): Story {
+            return Story(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Story?> {
+            return arrayOfNulls(size)
+        }
+    }
+
     fun isVideo() = storyType == StoryType.VIDEO
     fun isImage() = storyType == StoryType.IMAGE
     fun isText() = storyType == StoryType.TEXT
     fun isAudio() = storyType == StoryType.AUDIO
-
-    /*private fun getVideoIdFromYoutubeUrl(youtubeUrl: String?): String? {
-        *//*
-           Possibile Youtube urls.
-           http://www.youtube.com/watch?v=WK0YhfKqdaI
-           http://www.youtube.com/embed/WK0YhfKqdaI
-           http://www.youtube.com/v/WK0YhfKqdaI
-           http://www.youtube-nocookie.com/v/WK0YhfKqdaI?version=3&hl=en_US&rel=0
-           http://www.youtube.com/watch?v=WK0YhfKqdaI
-           http://www.youtube.com/watch?feature=player_embedded&v=WK0YhfKqdaI
-           http://www.youtube.com/e/WK0YhfKqdaI
-           http://youtu.be/WK0YhfKqdaI
-        *//*
-
-        if (youtubeUrl?.trim().isNullOrEmpty()) return null
-
-        val youtubeUrl = youtubeUrl?.trim() ?: ""
-
-        val pattern =
-            "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*"
-        val compiledPattern: Pattern = Pattern.compile(pattern)
-        //url is youtube url for which you want to extract the id.
-        val matcher: Matcher = compiledPattern.matcher(youtubeUrl)
-        return if (matcher.find()) {
-            matcher.group()
-        } else null
-    }
-
-    private fun isYoutubeUrl(youtubeUrl: String?): Boolean {
-        if (youtubeUrl?.trim().isNullOrEmpty()) return false
-
-        val youtubeUrl = youtubeUrl?.trim() ?: ""
-
-        val success: Boolean
-        val pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+"
-        success = !youtubeUrl.trim().isNullOrEmpty() && youtubeUrl.matches(pattern.toRegex())
-        return success
-    }*/
 }
