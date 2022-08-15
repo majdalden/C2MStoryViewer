@@ -1,6 +1,7 @@
 package com.majd_alden.storyviewerlibrary.utils
 
 import com.majd_alden.storyviewerlibrary.data.Story
+import com.majd_alden.storyviewerlibrary.data.StoryTextFont
 import com.majd_alden.storyviewerlibrary.data.StoryType
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import kotlin.random.Random
@@ -93,6 +94,108 @@ object StoryGenerator {
                 )
             )
         }
+
+        val stories = mutableListOf<Story>()
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "emfvpokeropvfcre\ntgopetrkfopr\nrkfcreopfr",
+                storyTextFont = StoryTextFont.CAIRO_BOLD,
+                storyTextBackgroundColor = "#FFFFF000",
+                storyTextColor = "#FF00479E",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 0) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "111HdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhfggvkvkvkvjvjvivivi222",
+                storyTextFont = StoryTextFont.POPPINS_SEMI_BOLD,
+                storyTextBackgroundColor = "#FF787777",
+                storyTextColor = "#FFF5DE82",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 2) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "222HdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhhxbxhfggvkvkvkvjvjvivivi592",
+                storyTextFont = StoryTextFont.SOURCE_SAN_PROBOLD,
+                storyTextBackgroundColor = "#FF787777",
+                storyTextColor = "#FFF5DE82",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 2) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "111HdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhHdhdhddjdjdhxhxhxbxhfgghhuhjjhgggggghxjchjfjjfhfhchxjdjxjjdjxhdjdhdhhxhxhhxhxhchfjdjdjdjjdjdjfjcjcjfjjfjfjfjjfjfhhhfhchhchhchhchdhhxhfhhxhdhhdhhchchdhfhdhdhdhhdhdhduduududhxhchchchhchcuhxhchchbvjkvkvkvkvkvjvjvivivi222",
+                storyTextFont = StoryTextFont.ROBOTO_MEDIUM,
+                storyTextBackgroundColor = "#FF787777",
+                storyTextColor = "#FFF5DE82",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 2) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "111Lorem ipsum dolor sit amet, vestibulum accumsan22 aliquam est nulla et, commodo purus pellentesque est. Lacus phasellus praesent tincidunt nec euismod, tincidunt nulla consectetuer nullam morbi est scelerisque, diam tristique volutpat iaculis ac sapien, quam hac mollis nec dui similique ut. Vivamus enim nec tortor turpis, sit vivamus, imperdiet neque, pellentesque massa lectus nec amet nulla a, mus suscipit wisi gravida. Vivamus in dictumst, interdum egestas curabitur quisque id nibh, porttitor imperdiet orci congue volutpat arcu, vehicula vivamus urna. Sollicitudin et iaculis id nec fusce lacinia, augue nec aliquam.\n" +
+                        "Metus a a ligula integer urna diam, magnis fermentum aliquam mi, torquent mauris justo molestie nonummy ut cras, leo quis. Lacus laoreet. Sem vulputate massa hendrerit. Porta massa fringilla pede aliquet nulla, consequat itaque non vivamus a. Venenatis justo consequat, consequat massa dui, amet aenean mus, tincidunt sodales turpis tempus felis tortor, hymenaeos eu. Vehicuded33la feugiat in sit elementum libero, tortor ante, vestibulum et aptent et mauris enim tincidunt, faucibus orci ante praesent amet. Phasellus fusce vestibulum suspendisse metus quia, morbi proin eu, in donec urna sagittis sint, wisi porttitor auctor dolor volutpat in pede. Duis ornare nec at, scelerisque nunc minim libero, sociis magna, in suscipit eu. Libero mus est leo, nam lorem vel, sed nibh commodi amet turpis, cursus libero turpis eu, cras eu labore elementum sem neque sem. Mi orci duis eu, vulputate vitae mi sit, vestibulum id, ullamcorper ipsum volutpat.\n" +
+                        "Eu sed, rhoncus et pretium viverra, mi etiam non a volutpat, eros nunc, volutpat at. Velit nulla, vestibulum euismod consectetuer amet nec luctus pede, sed adipiscing turpis, ultricies ante lacinia, ac fringilla. Vitae tristique eros, massa elit aliquam, luctus nec donec non eros, quis condimentum nec eros, sed a. Semper luct9999us wisi mollis donec a tincidunt, quis amet orci amet vulputate urna, 3434sed praesent montes id vestibulum lobortis, quam duis dolor duis tellus, phasellus mi tortor velit. Aenean ut commodo sodales mi amet nisl. Aliquam enim. Molestie a, nec ipsum nonummy, volutpat vitae integer dignissim auctor, dolor nibh id ullamcorper natus. Sodales habitant et, sapien elit et, orci arcu, leo sed feugiat velit massa, posuere turpis nullam bibendum mi mus amet.\n" +
+                        "Lacinia lorem orci amet pulvinar, a duis vel nec. Magna euismod purus viverra, potenti sed sed ultricies maecenas, sollicitudin mauris 555placerat per posuere quis, nam ante nulla lorem aliquam ege66t. Pharetra sodales, tempor diam augue l777obortis sagittis condimentum, rutrum cras p888ede facilisis, sit diam urna maecenas per nullam vivamus. Erat pellentesque tellus diam imp100erdiet turpis, nonummy integer turpis vivamus mauris. Consectetur urna, maecenas luctus, a quis aliquet risus, dignissim risus. Pede vel nibh integer, sed convallis donec turpis maecenas dolor, sed sed platea feugiat ut praesent. Viverra turpis nulla tortor at suspendisse, sapien nibh congue lacinia hendrerit lobortis, nunc erat ac. Nibh tortor risus non odio, ullamcorper voluptate, quisque iaculis blandit scelerisque rutrum pede viverra, sed id lobortis augue pretium. Sit nulla, nisl blandit nulla. Ultricies odio, vulputate aliquam massa diam proin, quis luctus faucibus pellentesque etiam amet, donec eu. Eget amet justo, ligula aenean, semper nullam felis at dapibus pede.",
+                storyTextFont = StoryTextFont.POPPINS_LIGHT,
+                storyTextBackgroundColor = "#FFA23A3A",
+                storyTextColor = "#FFADE978",
+                maxStoryTextLength = 250,
+                maxStoryTextLines = 8,
+                storyDate = System.currentTimeMillis() - (1 * (24 - 2) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n",
+                storyTextFont = StoryTextFont.SF_PRO_DISPLAY_MEDIUM,
+                storyTextBackgroundColor = "#000000",
+                storyTextColor = "#FFFFFF",
+                maxStoryTextLines = 12,
+                storyDate = System.currentTimeMillis() - (1 * (24 - 1) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n",
+                storyTextFont = StoryTextFont.SOURCE_SAN_PRO_SEMIBOLD,
+                storyTextBackgroundColor = "#FFFFFF",
+                storyTextColor = "#000000",
+                maxStoryTextLines = 12,
+                storyDate = System.currentTimeMillis() - (1 * (24 - 2) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.TEXT,
+                storyText = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10",
+                storyTextFont = StoryTextFont.APP_ROBOTO_BOLD,
+                storyTextBackgroundColor = "#FFE96161",
+                storyTextColor = "#FFD9FF92",
+                maxStoryTextLines = 10,
+                storyDate = System.currentTimeMillis() - (1 * (24 - 2) * 60 * 60 * 1000)
+            )
+        )
+
+        storyUserList.add(
+            0,
+            StoryUser(
+                "username$0",
+                userProfileUrls[Random.nextInt(userProfileUrls.size)],
+                stories,
+                Random.nextBoolean()
+            )
+        )
+
+
 
         return storyUserList
     }
