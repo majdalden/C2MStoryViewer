@@ -80,7 +80,6 @@ class StoryViewerFragment : Fragment(),
     private var isAddedDialogTextItemList = false
     private var isUserDismissMoreMenu = false
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -129,8 +128,8 @@ class StoryViewerFragment : Fragment(),
             binding.storiesProgressView.startStories()
         } else {
             // restart animation
-            val currentStoryPosition = arguments?.getInt(EXTRA_POSITION) ?: 0
-            counter = StoryViewerActivity.progressState.get(currentStoryPosition)
+            val currentUserStoryPosition = arguments?.getInt(EXTRA_POSITION) ?: 0
+            counter = StoryViewerActivity.progressState.get(currentUserStoryPosition)
             binding.storiesProgressView.startStories(counter)
         }
     }
@@ -276,6 +275,9 @@ class StoryViewerFragment : Fragment(),
             timeInMillis = stories[counter].storyDate
         }
         binding.storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
+
+
+        onStoryChangedListener?.invoke(position, counter)
 
         setupMoreMenu()
     }
@@ -437,8 +439,6 @@ class StoryViewerFragment : Fragment(),
     private fun setupOnClickMoreMenu() {
         val activity = activity ?: return
 
-        val currentItem = position
-
         if (moreMenuDialogBottom == null) {
             moreMenuDialogBottom = DialogBottom(activity)
             moreMenuDialogBottom
@@ -474,7 +474,10 @@ class StoryViewerFragment : Fragment(),
                                     moreMenuDialogBottom?.dismiss()
 //                                        onComplete()
                                     toggleLoadMode(isLoading = false)
-                                    onClickDeleteStoryListener?.invoke(currentItem)
+                                    onClickDeleteStoryListener?.invoke(
+                                        position,
+                                        counter
+                                    )
                                 },
                                 DialogTextStyle.Builder(activity)
                                     .color(R.color.ios_like_red).build()
@@ -615,6 +618,9 @@ class StoryViewerFragment : Fragment(),
             }
         }
 
-        open var onClickDeleteStoryListener: ((position: Int) -> Unit)? = null
+        open var onClickDeleteStoryListener: ((userPosition: Int, storyPosition: Int) -> Unit)? =
+            null
+        open var onStoryChangedListener: ((userPosition: Int, storyPosition: Int) -> Unit)? = null
+
     }
 }

@@ -1,7 +1,7 @@
 package com.majd_alden.storyviewer
 
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.majd_alden.storyviewerlibrary.screen.StoryViewerActivity
 import com.majd_alden.storyviewerlibrary.screen.StoryViewerFragment
@@ -20,12 +20,24 @@ class MainActivity : AppCompatActivity() {
                 StoryViewerActivity.newInstance(
                     this@MainActivity,
                     StoryGenerator.generateStories(),
-                    2,
-                    0
+//                    2,
+//                    0
                 )
             )
-            StoryViewerFragment.onClickDeleteStoryListener = {
-                Toast.makeText(this@MainActivity, "it: $it", Toast.LENGTH_SHORT).show()
+            StoryViewerFragment.onClickDeleteStoryListener = { userPosition, storyPosition ->
+//                Toast.makeText(this@MainActivity, "userPosition: $userPosition, storyPosition: $storyPosition", Toast.LENGTH_SHORT).show()
+                Log.e(
+                    "MainActivity",
+                    "onCreate onClickDeleteStoryListener userPosition: $userPosition, storyPosition: $storyPosition"
+                )
+            }
+
+            StoryViewerFragment.onStoryChangedListener = { userPosition, storyPosition ->
+//                Toast.makeText(this@MainActivity, "userPosition: $userPosition, storyPosition: $storyPosition", Toast.LENGTH_SHORT).show()
+                Log.e(
+                    "MainActivity",
+                    "onCreate onStoryChangedListener userPosition: $userPosition, storyPosition: $storyPosition"
+                )
             }
         }
     }
