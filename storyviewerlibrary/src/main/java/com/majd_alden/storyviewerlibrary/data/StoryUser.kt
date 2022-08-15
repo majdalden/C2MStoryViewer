@@ -13,13 +13,6 @@ data class StoryUser(
     constructor(parcel: Parcel) : this(
         username = parcel.readString() ?: "",
         profilePicUrl = parcel.readString() ?: "",
-//        stories = parcel.readArrayList(Story::class.java.classLoader)
-//            ?.toMutableList() as? MutableList<Story>? ?: mutableListOf(),
-//        stories= mutableListOf(),
-//        stories = parcel.readParcelableArray(Story::class.java.classLoader)?.toMutableList()
-//                as? MutableList<Story>? ?: mutableListOf(),
-//        stories = parcel.readList2(mutableListOf<Story>(), Story::class.java.classLoader)
-//            .toMutableList(),
         stories = Gson().fromJson(
             parcel.readString() ?: "", Array<Story>::class.java
         )?.toMutableList() ?: mutableListOf(),
@@ -29,7 +22,6 @@ data class StoryUser(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(username)
         parcel.writeString(profilePicUrl)
-//        parcel.writeList(stories)
         parcel.writeString(Gson().toJson(stories.toTypedArray()))
         parcel.writeByte(if (isShowMoreMenu) 1 else 0)
     }
