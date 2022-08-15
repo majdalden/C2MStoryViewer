@@ -39,6 +39,8 @@ class StoryViewerActivity : AppCompatActivity(),
 
     private lateinit var pagerAdapter2: StoryPager2Adapter
     private var currentPage: Int = 0
+    private var isFirstTime = true
+
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -111,19 +113,31 @@ class StoryViewerActivity : AppCompatActivity(),
 
     private fun setUpPager() {
         val storyUserList =
-                intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
+            intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
                 ?.toMutableList() ?: mutableListOf()
+
+        currentPage = intent?.extras?.getInt(ARG_CURRENT_USER_POSITION, 0) ?: 0
+        val currentStoryPosition = intent?.extras?.getInt(ARG_CURRENT_STORY_POSITION, 0) ?: 0
+
         if (storyUserList.isEmpty()) {
             finish()
             return
         }
+
         preLoadStories(storyUserList)
 
         pagerAdapter2 = StoryPager2Adapter(
-            supportFragmentManager,
-            lifecycle,
-            storyUserList
+            fragmentManager = supportFragmentManager,
+            lifecycle = lifecycle,
+            storyList = storyUserList,
+            currentUserPosition = currentPage
         )
+
+        if (isFirstTime) {
+            if (currentStoryPosition > 0) {
+                progressState.put(currentPage, currentStoryPosition)
+            }
+        }
 
 //        binding.viewPager2.isUserInputEnabled = false
         binding.viewPager2.adapter = pagerAdapter2
@@ -251,6 +265,8 @@ class StoryViewerActivity : AppCompatActivity(),
 
         private const val TAG = "StoryViewerActivity"
         private const val ARG_STORIES_USERS_LIST = "STORIES_USERS_LIST"
+        private const val ARG_CURRENT_USER_POSITION = "CURRENT_USER_POSITION"
+        private const val ARG_CURRENT_STORY_POSITION = "CURRENT_STORY_POSITION"
 
         var simpleCache: SimpleCache? = null
         val progressState = SparseIntArray()
@@ -280,11 +296,36 @@ class StoryViewerActivity : AppCompatActivity(),
 
         fun newInstance(
             context: Context,
+            storiesUsersList: MutableList<StoryUser>,
+            currentUserPosition: Int = 0,
+            currentStoryPosition: Int = 0,
+        ): Intent {
+            return newInstance(
+                context,
+                ArrayList(storiesUsersList),
+                currentUserPosition,
+                currentStoryPosition
+            )
+        }
+
+        fun newInstance(
+            context: Context,
             storiesUsersList: ArrayList<StoryUser>,
+        ): Intent {
+            return newInstance(context, ArrayList(storiesUsersList), 0, 0)
+        }
+
+        fun newInstance(
+            context: Context,
+            storiesUsersList: ArrayList<StoryUser>,
+            currentUserPosition: Int = 0,
+            currentStoryPosition: Int = 0,
         ): Intent {
             val storyViewerActivityIntent = Intent(context, StoryViewerActivity::class.java)
             val args = Bundle()
             args.putParcelableArrayList(ARG_STORIES_USERS_LIST, ArrayList(storiesUsersList))
+            args.putInt(ARG_CURRENT_USER_POSITION, currentUserPosition)
+            args.putInt(ARG_CURRENT_STORY_POSITION, currentStoryPosition)
             storyViewerActivityIntent.putExtras(args)
             return storyViewerActivityIntent
         }

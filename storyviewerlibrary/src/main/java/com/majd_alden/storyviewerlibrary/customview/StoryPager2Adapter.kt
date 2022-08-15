@@ -10,10 +10,12 @@ import com.majd_alden.storyviewerlibrary.screen.StoryViewerFragment
 class StoryPager2Adapter constructor(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
-    private val storyList: MutableList<StoryUser>
+    private val storyList: MutableList<StoryUser>,
+    private val currentUserPosition: Int = 0,
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     private val storyFragmentList = mutableListOf<StoryViewerFragment>()
+    private var isFirstTime = true
 
     fun findFragmentByPosition(position: Int): Fragment? {
         if (position < 0 || position >= storyFragmentList.size) {
@@ -27,7 +29,13 @@ class StoryPager2Adapter constructor(
     }
 
     override fun createFragment(position: Int): Fragment {
-        val fragment = StoryViewerFragment.newInstance(position, storyList[position])
+        val fragment =
+            StoryViewerFragment.newInstance(position = position, story = storyList[position])
+
+        if (currentUserPosition == position) {
+            isFirstTime = false
+        }
+
         storyFragmentList.add(fragment)
         return fragment
     }

@@ -79,7 +79,6 @@ class StoryViewerFragment : Fragment(),
     private val isViewAudienceToMoreMenu = true
     private var isAddedDialogTextItemList = false
     private var isUserDismissMoreMenu = false
-    private val onClickDeleteStoryListener: ((position: Int) -> Unit)? = null
 
 
     override fun onCreateView(
@@ -125,11 +124,13 @@ class StoryViewerFragment : Fragment(),
 
         simpleExoPlayer?.seekTo(5)
         simpleExoPlayer?.playWhenReady = true
+
         if (counter == 0) {
             binding.storiesProgressView.startStories()
         } else {
             // restart animation
-            counter = StoryViewerActivity.progressState.get(arguments?.getInt(EXTRA_POSITION) ?: 0)
+            val currentStoryPosition = arguments?.getInt(EXTRA_POSITION) ?: 0
+            counter = StoryViewerActivity.progressState.get(currentStoryPosition)
             binding.storiesProgressView.startStories(counter)
         }
     }
@@ -604,6 +605,7 @@ class StoryViewerFragment : Fragment(),
         //        private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
         private const val EXTRA_STORY_USER = "EXTRA_STORY_USER"
+
         fun newInstance(position: Int, story: StoryUser): StoryViewerFragment {
             return StoryViewerFragment().apply {
                 arguments = Bundle().apply {
@@ -612,5 +614,7 @@ class StoryViewerFragment : Fragment(),
                 }
             }
         }
+
+        open var onClickDeleteStoryListener: ((position: Int) -> Unit)? = null
     }
 }
