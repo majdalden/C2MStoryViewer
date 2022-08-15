@@ -125,7 +125,7 @@ class StoryViewerActivity : AppCompatActivity(),
             storyUserList
         )
 
-        binding.viewPager2.isUserInputEnabled = false
+//        binding.viewPager2.isUserInputEnabled = false
         binding.viewPager2.adapter = pagerAdapter2
         binding.viewPager2.currentItem = currentPage
         binding.viewPager2.setPageTransformer(CubeOutTransformer2())
