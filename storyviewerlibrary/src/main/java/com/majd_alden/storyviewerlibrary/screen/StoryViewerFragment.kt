@@ -2,15 +2,20 @@ package com.majd_alden.storyviewerlibrary.screen
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.format.DateFormat
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
@@ -33,6 +38,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.majd_alden.storyviewerlibrary.R
 import com.majd_alden.storyviewerlibrary.customview.StoriesProgressView
 import com.majd_alden.storyviewerlibrary.data.Story
+import com.majd_alden.storyviewerlibrary.data.StoryTextFont
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.FragmentStoryViewerBinding
 import com.majd_alden.storyviewerlibrary.utils.CacheDataSourceFactory
@@ -165,20 +171,72 @@ class StoryViewerFragment : Fragment(),
 
     private fun updateStory() {
         simpleExoPlayer?.stop()
-        if (stories[counter].isVideo()) {
+        val story = stories[counter]
+        if (story.isVideo()) {
             binding.storyDisplayVideo.show()
             binding.storyDisplayImage.hide()
+            binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
             initializePlayer()
-        } else {
+        } else if (story.isText()) {
             binding.storyDisplayVideo.hide()
-            binding.storyDisplayVideoProgress.show()
+            binding.storyDisplayImage.hide()
+            binding.storyDisplayText.show()
+            binding.storyDisplayVideoProgress.hide()
+
+
+            if (story.maxStoryTextLength > 0) {
+                val fArray = arrayOfNulls<InputFilter>(1)
+                fArray[0] = InputFilter.LengthFilter(story.maxStoryTextLength)
+                binding.storyDisplayText.filters = fArray
+            }
+
+            if (story.maxStoryTextLines > 0) {
+                binding.storyDisplayText.maxLines = story.maxStoryTextLines
+            }
+
+            binding.storyDisplayText.text = story.storyText.trim()
+
+            checkSizeText(activity, binding.storyDisplayText, story.maxStoryTextLength)
+
+            try {
+                if (story.storyTextBackgroundColor.trim().isNotEmpty())
+                    binding.storyDisplayText.setBackgroundColor(Color.parseColor(story.storyTextBackgroundColor))
+                else
+                    binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+            } catch (e: Exception) {
+                binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+            }
+
+            try {
+                if (story.storyTextColor.trim().isNotEmpty())
+                    binding.storyDisplayText.setTextColor(Color.parseColor(story.storyTextColor))
+                else
+                    binding.storyDisplayText.setTextColor(Color.WHITE)
+            } catch (e: Exception) {
+                binding.storyDisplayText.setTextColor(Color.WHITE)
+            }
+
+            try {
+                val typeface = story.storyTextTypeface ?: getFontTypeFace(story.storyTextFont)
+                if (typeface != null) {
+                    binding.storyDisplayText.typeface = typeface
+                }
+            } catch (e: Exception) {
+                // ignore
+            }
+
+
+        } else if (story.isImage()) {
+            binding.storyDisplayVideo.hide()
             binding.storyDisplayImage.show()
+            binding.storyDisplayText.hide()
+            binding.storyDisplayVideoProgress.show()
 
             toggleLoadMode(true)
 
             Glide.with(this)
-                .load(stories[counter].url)
+                .load(stories[counter].storyUrl)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -209,7 +267,9 @@ class StoryViewerFragment : Fragment(),
                     }
                 })
                 .into(binding.storyDisplayImage)
-        }
+        } /*else if (story.isAudio()) {
+            // ignore
+        }*/
 
         val cal: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
             timeInMillis = stories[counter].storyDate
@@ -244,7 +304,7 @@ class StoryViewerFragment : Fragment(),
             CacheDataSourceFactory(context, 100 * 1024 * 1024, 100 * 1024 * 1024)
 
         val mediaSource = ProgressiveMediaSource.Factory(mediaDataSourceFactory).createMediaSource(
-            MediaItem.fromUri(Uri.parse(stories[counter].url))
+            MediaItem.fromUri(Uri.parse(stories[counter].storyUrl))
         )
         simpleExoPlayer?.setMediaSource(mediaSource)
         simpleExoPlayer?.prepare()
@@ -365,15 +425,15 @@ class StoryViewerFragment : Fragment(),
     private fun setupMoreMenu() {
         if (storyUser.isShowMoreMenu) {
             binding.moreIV.visibility = View.VISIBLE
-            binding.moreIV.setOnClickListener { view ->
-                setupMoreMenu(view)
+            binding.moreIV.setOnClickListener {
+                setupOnClickMoreMenu()
             }
         } else {
             binding.moreIV.visibility = View.GONE
         }
     }
 
-    private fun setupMoreMenu(view: View) {
+    private fun setupOnClickMoreMenu() {
         val activity = activity ?: return
 
         val currentItem = position
@@ -400,14 +460,14 @@ class StoryViewerFragment : Fragment(),
             if (isAddDeleteItemToMoreMenu) {
                 moreMenuDialogBottom?.addBottomItem(
                     getString(R.string.delete),
-                    { view1 ->
+                    {
                         isUserDismissMoreMenu = true
                         val confirmationDeleteStoryDialog = DialogNormal(activity)
                         confirmationDeleteStoryDialog.setTitle(R.string.delete_this_story)
                             .setContent(activity.getString(R.string.are_you_sure_you_want_to_delete_this_story))
                             .setConfirm(
                                 getString(R.string.delete),
-                                { view2 ->
+                                {
                                     isUserDismissMoreMenu = true
                                     confirmationDeleteStoryDialog.dismiss()
                                     moreMenuDialogBottom?.dismiss()
@@ -440,7 +500,7 @@ class StoryViewerFragment : Fragment(),
             if (isViewAudienceToMoreMenu) {
                 moreMenuDialogBottom?.addBottomItem(
                     getString(R.string.view_audience)
-                ) { view1 ->
+                ) { _ ->
                     isUserDismissMoreMenu = true
                     moreMenuDialogBottom?.dismiss()
                     toggleLoadMode(isLoading = false)
@@ -453,7 +513,7 @@ class StoryViewerFragment : Fragment(),
     }
 
     private fun showStoryOverlay() {
-        if (binding.storyOverlay == null || binding.storyOverlay.alpha != 0F) return
+        if (binding.storyOverlay.alpha != 0F) return
 
         binding.storyOverlay.animate()
             .setDuration(100)
@@ -462,7 +522,7 @@ class StoryViewerFragment : Fragment(),
     }
 
     private fun hideStoryOverlay() {
-        if (binding.storyOverlay == null || binding.storyOverlay.alpha != 1F) return
+        if (binding.storyOverlay.alpha != 1F) return
 
         binding.storyOverlay.animate()
             .setDuration(200)
@@ -491,8 +551,57 @@ class StoryViewerFragment : Fragment(),
         }
     }
 
+    private fun getFontTypeFace(textFont: StoryTextFont): Typeface? {
+        val activity = activity ?: return null
+        val typeface: Typeface?
+        val font = when (textFont) {
+            StoryTextFont.APP_ROBOTO_BOLD -> R.font.app_roboto_bold
+            StoryTextFont.CAIRO_BOLD -> R.font.cairo_bold
+            StoryTextFont.POPPINS_BOLD -> R.font.poppins_bold
+            StoryTextFont.POPPINS_LIGHT -> R.font.poppins_light
+            StoryTextFont.POPPINS_REGULAR -> R.font.poppins_regular
+            StoryTextFont.POPPINS_SEMI_BOLD -> R.font.poppins_semi_bold
+            StoryTextFont.ROBOTO_MEDIUM -> R.font.roboto_medium
+            StoryTextFont.ROBOTO_REGULAR -> R.font.roboto_regular
+            StoryTextFont.SF_PRO_DISPLAY_MEDIUM -> R.font.sf_pro_display_medium
+            StoryTextFont.SOURCE_SAN_PRO_SEMIBOLD -> R.font.source_san_pro_semibold
+            StoryTextFont.SOURCE_SAN_PROBOLD -> R.font.source_san_probold
+            else -> R.font.app_roboto_bold
+        }
+
+        typeface = ResourcesCompat.getFont(activity, font)
+
+        return typeface
+    }
+
+    private fun checkSizeText(
+        context: Context?,
+        textView: TextView?,
+        maxStoryTextLength: Int,
+    ) {
+        if (context == null
+            || textView?.text?.toString()?.trim().isNullOrEmpty()
+        ) {
+            return
+        }
+        val textStory = textView?.text?.toString()?.trim() ?: ""
+        val textStoryLength = textStory.length
+        val textStorySizeLarge = context.resources.getDimension(R.dimen._36sdp)
+        val textStorySizeMedium = context.resources.getDimension(R.dimen._28sdp)
+        val textStorySizeSmall = context.resources.getDimension(R.dimen._20sdp)
+        val textStoryToSizeLarge: Float = 1.0f / 3.0f * maxStoryTextLength
+        val textStoryToSizeMedium: Float = 2.0f / 3.0f * maxStoryTextLength
+        if (textStoryToSizeLarge > textStoryLength) {
+            textView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, textStorySizeLarge)
+        } else if (textStoryToSizeMedium > textStoryLength) {
+            textView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, textStorySizeMedium)
+        } else {
+            textView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, textStorySizeSmall)
+        }
+    }
+
     companion object {
-        private const val TAG = "StoryViewerFragment"
+        //        private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
         private const val EXTRA_STORY_USER = "EXTRA_STORY_USER"
         fun newInstance(position: Int, story: StoryUser): StoryViewerFragment {

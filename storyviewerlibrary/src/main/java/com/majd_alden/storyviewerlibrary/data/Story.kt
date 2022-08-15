@@ -1,21 +1,32 @@
 package com.majd_alden.storyviewerlibrary.data
 
+import android.graphics.Typeface
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 @Parcelize
 data class Story(
-    val url: String,
+    val storyType: StoryType,
+    val storyUrl: String = "",
+    val storyText: String = "",
+    val storyTextFont: StoryTextFont = StoryTextFont.DEFAULT,
+    val storyTextBackgroundColor: String = "",
+    val storyTextColor: String = "",
+    val storyTextTypeface: Typeface? = null,
+    val maxStoryTextLength: Int = 300,
+    val maxStoryTextLines: Int = 10,
     val storyDate: Long
 ) : Parcelable {
 
-    //    fun isVideo() = url.contains(".mp4") || isYoutubeUrl(url)
-    fun isVideo() = url.contains(".mp4", ignoreCase = true)
+    ////    fun isVideo() = url.contains(".mp4") || isYoutubeUrl(url)
+//    fun isVideo() = url.contains(".mp4", ignoreCase = true)
+    fun isVideo() = storyType == StoryType.VIDEO
+    fun isImage() = storyType == StoryType.IMAGE
+    fun isText() = storyType == StoryType.TEXT
+    fun isAudio() = storyType == StoryType.AUDIO
 
-    private fun getVideoIdFromYoutubeUrl(youtubeUrl: String?): String? {
-        /*
+    /*private fun getVideoIdFromYoutubeUrl(youtubeUrl: String?): String? {
+        *//*
            Possibile Youtube urls.
            http://www.youtube.com/watch?v=WK0YhfKqdaI
            http://www.youtube.com/embed/WK0YhfKqdaI
@@ -25,7 +36,7 @@ data class Story(
            http://www.youtube.com/watch?feature=player_embedded&v=WK0YhfKqdaI
            http://www.youtube.com/e/WK0YhfKqdaI
            http://youtu.be/WK0YhfKqdaI
-        */
+        *//*
 
         if (youtubeUrl?.trim().isNullOrEmpty()) return null
 
@@ -50,5 +61,5 @@ data class Story(
         val pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+"
         success = !youtubeUrl.trim().isNullOrEmpty() && youtubeUrl.matches(pattern.toRegex())
         return success
-    }
+    }*/
 }

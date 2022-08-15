@@ -139,10 +139,12 @@ class StoryViewerActivity : AppCompatActivity(),
         storyUserList.forEach { storyUser ->
             storyUser.stories.forEach { story ->
                 if (story.isVideo()) {
-                    videoList.add(story.url)
-                } else {
-                    imageList.add(story.url)
-                }
+                    videoList.add(story.storyUrl)
+                } else if (story.isImage()) {
+                    imageList.add(story.storyUrl)
+                }/* else if (story.isAudio()) {
+                    // ignore
+                }*/
             }
         }
         preLoadVideos(videoList)

@@ -1,6 +1,7 @@
 package com.majd_alden.storyviewerlibrary.utils
 
 import com.majd_alden.storyviewerlibrary.data.Story
+import com.majd_alden.storyviewerlibrary.data.StoryType
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import kotlin.random.Random
 
@@ -69,10 +70,17 @@ object StoryGenerator {
             val stories = mutableListOf<Story>()
             val storySize = Random.nextInt(1, 5)
             for (j in 0 until storySize) {
+                val storyUrl = storyUrls[Random.nextInt(storyUrls.size)].trim()
                 stories.add(
                     Story(
-                        storyUrls[Random.nextInt(storyUrls.size)],
-                        System.currentTimeMillis() - (1 * (24 - j) * 60 * 60 * 1000)
+                        storyType = if (storyUrl.contains(
+                                ".mp4",
+                                ignoreCase = true
+                            )
+                        ) StoryType.VIDEO
+                        else StoryType.IMAGE,
+                        storyUrl = storyUrl,
+                        storyDate = System.currentTimeMillis() - (1 * (24 - j) * 60 * 60 * 1000)
                     )
                 )
             }
