@@ -115,7 +115,7 @@ class StoryViewerActivity : AppCompatActivity(),
         } else {
             //there is no next story
             val isFinish = onFinishListener?.invoke()
-            if ((onFinishListener != null && isFinish == true) || onFinishListener == null) {
+            if (onFinishListener == null || (onFinishListener != null && isFinish == true)) {
                 finish()
             }
 //            Toast.makeText(this, "All stories displayed.", Toast.LENGTH_LONG).show()
@@ -127,16 +127,19 @@ class StoryViewerActivity : AppCompatActivity(),
             intent?.extras?.getParcelableArrayList<StoryUser>(ARG_STORIES_USERS_LIST)
                 ?.toMutableList() ?: mutableListOf()
 
-        currentPage = intent?.extras?.getInt(ARG_CURRENT_USER_POSITION, 0) ?: 0
-        val currentStoryPosition = intent?.extras?.getInt(ARG_CURRENT_STORY_POSITION, 0) ?: 0
-
         if (storyUserList.isEmpty()) {
-//            val isFinish = onFinishListener?.invoke() ?: true
             val isFinish = onFinishListener?.invoke()
-            if ((onFinishListener != null && isFinish == true) || onFinishListener == null) {
+            if (onFinishListener == null || (onFinishListener != null && isFinish == true)) {
                 finish()
             }
             return
+        }
+
+        var currentStoryPosition: Int? = null
+
+        if (isFirstTime) {
+            currentPage = intent?.extras?.getInt(ARG_CURRENT_USER_POSITION, 0) ?: 0
+            currentStoryPosition = intent?.extras?.getInt(ARG_CURRENT_STORY_POSITION, 0)
         }
 
         preLoadStories(storyUserList)
@@ -144,15 +147,14 @@ class StoryViewerActivity : AppCompatActivity(),
         pagerAdapter2 = StoryPager2Adapter(
             fragmentManager = supportFragmentManager,
             lifecycle = lifecycle,
-            storyList = storyUserList,
-            currentUserPosition = currentPage
+            storyList = storyUserList
         )
 
-        if (isFirstTime) {
-            if (currentStoryPosition > 0) {
-                progressState.put(currentPage, currentStoryPosition)
-            }
+        if (isFirstTime && currentStoryPosition != null && currentStoryPosition > 0) {
+            progressState.put(currentPage, currentStoryPosition)
         }
+
+        isFirstTime = false
 
 //        binding.viewPager2.isUserInputEnabled = false
         binding.viewPager2.adapter = pagerAdapter2
@@ -312,8 +314,8 @@ class StoryViewerActivity : AppCompatActivity(),
         fun newInstance(
             context: Context,
             storiesUsersList: MutableList<StoryUser>,
-            currentUserPosition: Int = 0,
-            currentStoryPosition: Int = 0,
+            currentUserPosition: Int? = null,
+            currentStoryPosition: Int? = null,
         ): Intent {
             return newInstance(
                 context,
@@ -327,20 +329,24 @@ class StoryViewerActivity : AppCompatActivity(),
             context: Context,
             storiesUsersList: ArrayList<StoryUser>,
         ): Intent {
-            return newInstance(context, ArrayList(storiesUsersList), 0, 0)
+            return newInstance(context, ArrayList(storiesUsersList), null, null)
         }
 
         fun newInstance(
             context: Context,
             storiesUsersList: ArrayList<StoryUser>,
-            currentUserPosition: Int = 0,
-            currentStoryPosition: Int = 0,
+            currentUserPosition: Int? = null,
+            currentStoryPosition: Int? = null,
         ): Intent {
             val storyViewerActivityIntent = Intent(context, StoryViewerActivity::class.java)
             val args = Bundle()
             args.putParcelableArrayList(ARG_STORIES_USERS_LIST, ArrayList(storiesUsersList))
-            args.putInt(ARG_CURRENT_USER_POSITION, currentUserPosition)
-            args.putInt(ARG_CURRENT_STORY_POSITION, currentStoryPosition)
+            if (currentUserPosition != null) {
+                args.putInt(ARG_CURRENT_USER_POSITION, currentUserPosition)
+            }
+            if (currentStoryPosition != null) {
+                args.putInt(ARG_CURRENT_STORY_POSITION, currentStoryPosition)
+            }
             storyViewerActivityIntent.putExtras(args)
 //            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
