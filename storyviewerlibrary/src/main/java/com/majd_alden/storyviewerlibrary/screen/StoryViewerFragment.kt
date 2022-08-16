@@ -99,7 +99,9 @@ class StoryViewerFragment : Fragment(),
         updateStory()
         setUpUi()
 
-        binding.closeBtn.setOnClickListener { activity?.finish() }
+        binding.closeBtn.setOnClickListener {
+            activity?.finish()
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -618,9 +620,9 @@ class StoryViewerFragment : Fragment(),
             }
         }
 
-        open var onClickDeleteStoryListener: ((userPosition: Int, storyPosition: Int) -> Unit)? =
+        var onClickDeleteStoryListener: ((userPosition: Int, storyPosition: Int) -> Unit)? =
             null
-        open var onStoryChangedListener: ((userPosition: Int, storyPosition: Int) -> Unit)? = null
+        var onStoryChangedListener: ((userPosition: Int, storyPosition: Int) -> Unit)? = null
 
     }
 }

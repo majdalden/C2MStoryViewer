@@ -30,6 +30,13 @@ class MainActivity : AppCompatActivity() {
                     "MainActivity",
                     "onCreate onClickDeleteStoryListener userPosition: $userPosition, storyPosition: $storyPosition"
                 )
+
+                startActivity(
+                    StoryViewerActivity.newInstance(
+                        this@MainActivity,
+                        StoryGenerator.generateStories(),
+                    )
+                )
             }
 
             StoryViewerFragment.onStoryChangedListener = { userPosition, storyPosition ->

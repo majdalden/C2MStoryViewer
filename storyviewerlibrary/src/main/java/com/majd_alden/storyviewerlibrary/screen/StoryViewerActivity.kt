@@ -79,12 +79,20 @@ class StoryViewerActivity : AppCompatActivity(),
     override fun onResume() {
         super.onResume()
 
+        onShowListener?.invoke()
+
         binding.viewPager2.registerOnPageChangeCallback(onPageChangeCallback)
     }
 
     override fun onStop() {
         super.onStop()
         binding.viewPager2.unregisterOnPageChangeCallback(onPageChangeCallback)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        onDismissListener?.invoke()
     }
 
     override fun backPageView() {
@@ -106,7 +114,10 @@ class StoryViewerActivity : AppCompatActivity(),
             }
         } else {
             //there is no next story
-            finish()
+            val isFinish = onFinishListener?.invoke()
+            if ((onFinishListener != null && isFinish == true) || onFinishListener == null) {
+                finish()
+            }
 //            Toast.makeText(this, "All stories displayed.", Toast.LENGTH_LONG).show()
         }
     }
@@ -120,7 +131,11 @@ class StoryViewerActivity : AppCompatActivity(),
         val currentStoryPosition = intent?.extras?.getInt(ARG_CURRENT_STORY_POSITION, 0) ?: 0
 
         if (storyUserList.isEmpty()) {
-            finish()
+//            val isFinish = onFinishListener?.invoke() ?: true
+            val isFinish = onFinishListener?.invoke()
+            if ((onFinishListener != null && isFinish == true) || onFinishListener == null) {
+                finish()
+            }
             return
         }
 
@@ -327,7 +342,14 @@ class StoryViewerActivity : AppCompatActivity(),
             args.putInt(ARG_CURRENT_USER_POSITION, currentUserPosition)
             args.putInt(ARG_CURRENT_STORY_POSITION, currentStoryPosition)
             storyViewerActivityIntent.putExtras(args)
+            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             return storyViewerActivityIntent
         }
+
+        var onShowListener: (() -> Unit)? = null
+        var onFinishListener: (() -> Boolean)? = null
+        var onDismissListener: (() -> Unit)? = null
     }
 }
