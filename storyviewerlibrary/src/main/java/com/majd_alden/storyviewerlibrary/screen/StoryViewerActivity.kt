@@ -342,8 +342,8 @@ class StoryViewerActivity : AppCompatActivity(),
             args.putInt(ARG_CURRENT_USER_POSITION, currentUserPosition)
             args.putInt(ARG_CURRENT_STORY_POSITION, currentStoryPosition)
             storyViewerActivityIntent.putExtras(args)
-            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             storyViewerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             return storyViewerActivityIntent
         }
