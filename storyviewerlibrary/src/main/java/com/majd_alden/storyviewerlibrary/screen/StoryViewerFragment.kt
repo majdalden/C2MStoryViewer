@@ -240,7 +240,7 @@ class StoryViewerFragment : Fragment(),
             binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
 
-            toggleLoadMode(true)
+//            toggleLoadMode(true)
 
             Glide.with(this)
                 .load(stories[counter].storyUrl)
@@ -252,7 +252,7 @@ class StoryViewerFragment : Fragment(),
                         isFirstResource: Boolean
                     ): Boolean {
                         binding.storyDisplayVideoProgress.hide()
-                        toggleLoadMode(false)
+//                        toggleLoadMode(false)
                         if (counter == stories.size.minus(1)) {
                             pageViewOperator?.nextPageView()
                         } else {
@@ -271,6 +271,7 @@ class StoryViewerFragment : Fragment(),
                         binding.storyDisplayVideoProgress.hide()
                         onImagePrepared = true
                         toggleLoadMode(false)
+//                        resumeCurrentStory()
                         return false
                     }
                 })
@@ -551,11 +552,23 @@ class StoryViewerFragment : Fragment(),
     }
 
     fun pauseCurrentStory() {
+        if (BuildConfig.DEBUG)
+            Log.e(
+                TAG,
+                "${counter}-pauseCurrentStory stories[counter].storyType: ${stories[counter].storyType}, onResumeCalled: $onResumeCalled, onVideoPrepared: $onVideoPrepared, onImagePrepared: $onImagePrepared"
+            )
+
         simpleExoPlayer?.playWhenReady = false
         binding.storiesProgressView.pause()
     }
 
     fun resumeCurrentStory() {
+        if (BuildConfig.DEBUG)
+            Log.e(
+                TAG,
+                "${counter}-resumeCurrentStory stories[counter].storyType: ${stories[counter].storyType}, onResumeCalled: $onResumeCalled, onVideoPrepared: $onVideoPrepared, onImagePrepared: $onImagePrepared"
+            )
+
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
             return
@@ -622,7 +635,7 @@ class StoryViewerFragment : Fragment(),
     }
 
     companion object {
-        //        private const val TAG = "StoryViewerFragment"
+        private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
         private const val EXTRA_STORY_USER = "EXTRA_STORY_USER"
 

@@ -13,6 +13,7 @@ object StoryGenerator {
         storyUrls.add("https://miran-media.s3.amazonaws.com/resources/2020/03/23/CA_-_25.mp4")
 //        storyUrls.add("https://www.youtube.com/watch?v=V1t0WOUl8Vk")
         storyUrls.add("https://player.vimeo.com/external/403295268.sd.mp4?s=3446f787cefa52e7824d6ce6501db5261074d479&profile_id=165&oauth2_token_id=57447761")
+        storyUrls.add("https://i.picsum.photos/id/28/3840/2160.jpg?hmac=mi42yUT385MrZeW9Fq6OLmre--8-pVlylUMXJFDHiXA")
         storyUrls.add("https://player.vimeo.com/external/409206405.sd.mp4?s=0bc456b6ff355d9907f285368747bf54323e5532&profile_id=165&oauth2_token_id=57447761")
         storyUrls.add("https://player.vimeo.com/external/403295710.sd.mp4?s=788b046826f92983ada6e5caf067113fdb49e209&profile_id=165&oauth2_token_id=57447761")
         storyUrls.add("https://player.vimeo.com/external/394678700.sd.mp4?s=353646e34d7bde02ad638c7308a198786e0dff8f&profile_id=165&oauth2_token_id=57447761")
@@ -41,6 +42,7 @@ object StoryGenerator {
 
 
         val userProfileUrls = mutableListOf<String>()
+        userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
         userProfileUrls.add("https://randomuser.me/api/portraits/women/1.jpg")
@@ -208,16 +210,43 @@ object StoryGenerator {
  //            storyUrl = "https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
  //            storyUrl = "https://images.pexels.com/photos/1591382/pexels-photo-1591382.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
  //            storyUrl = "https://picsum.photos/3840/2160",
-             storyUrl = "https://i.picsum.photos/id/28/3840/2160.jpg?hmac=mi42yUT385MrZeW9Fq6OLmre--8-pVlylUMXJFDHiXA",
+             storyUrl = "https://i.picsum.photos/id/537/3840/2160.jpg?hmac=E58kTVbK24I6pe33UunljK-5ciq2NM3ktMeBagt_VnQ",
              storyDate = System.currentTimeMillis() - (1 * (24 - 5) * 60 * 60 * 1000)
          )
+
+        val story2 = Story(
+            storyType = StoryType.IMAGE,
+            //            storyUrl = "https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            //            storyUrl = "https://images.pexels.com/photos/1591382/pexels-photo-1591382.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            //            storyUrl = "https://picsum.photos/3840/2160",
+            storyUrl = "https://i.picsum.photos/id/329/3840/2160.jpg?hmac=jsjwZF7XRBrLZH9fAhFo5unttOnfQOxXvi_vrktqL2c",
+            storyDate = System.currentTimeMillis() - (1 * (24 - 5) * 60 * 60 * 1000)
+        )
+
+        val story3 = Story(
+            storyType = StoryType.IMAGE,
+            //            storyUrl = "https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            //            storyUrl = "https://images.pexels.com/photos/1591382/pexels-photo-1591382.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            //            storyUrl = "https://picsum.photos/3840/2160",
+            storyUrl = "https://i.picsum.photos/id/865/3840/2160.jpg?hmac=x8_MZzQKgdZDahDdCE3X-Hsa2_qap5EpyO1tgInEAHs",
+            storyDate = System.currentTimeMillis() - (1 * (24 - 5) * 60 * 60 * 1000)
+        )
+
+        val story4 = Story(
+            storyType = StoryType.IMAGE,
+            //            storyUrl = "https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            //            storyUrl = "https://images.pexels.com/photos/1591382/pexels-photo-1591382.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+            //            storyUrl = "https://picsum.photos/3840/2160",
+            storyUrl = "https://i.picsum.photos/id/386/3840/2160.jpg?hmac=uZtyARY2dNxoecEn-JeAu28INr8Hq065K8taAzHXKbY",
+            storyDate = System.currentTimeMillis() - (1 * (24 - 5) * 60 * 60 * 1000)
+        )
 
          storyUserList.add(
              0,
              StoryUser(
                  "username$0",
                  "https://randomuser.me/api/portraits/women/1.jpg",
-                 mutableListOf(story),
+                 mutableListOf(story,story2,story3,story4),
                  true
              )
          )*/
