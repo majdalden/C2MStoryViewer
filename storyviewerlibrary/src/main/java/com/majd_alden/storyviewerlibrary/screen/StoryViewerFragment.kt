@@ -551,14 +551,11 @@ class StoryViewerFragment : Fragment(),
     }
 
     fun pauseCurrentStory() {
-        Log.e("StoryViewerFragment", "pauseCurrentStory onResumeCalled: $onResumeCalled")
-
         simpleExoPlayer?.playWhenReady = false
         binding.storiesProgressView.pause()
     }
 
     fun resumeCurrentStory() {
-        Log.e("StoryViewerFragment", "resumeCurrentStory onResumeCalled: $onResumeCalled")
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
             return
