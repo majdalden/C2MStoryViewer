@@ -72,6 +72,7 @@ class StoryViewerFragment : Fragment(),
     private var limit = 500L
     private var onResumeCalled = false
     private var onVideoPrepared = false
+    private var onImagePrepared = false
 
     private var moreMenuDialogBottom: DialogBottom? = null
     private val dialogTextItemList: List<DialogText>? = null
@@ -120,6 +121,10 @@ class StoryViewerFragment : Fragment(),
         onResumeCalled = true
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
+            return
+        }
+
+        if (stories[counter].isImage() && !onImagePrepared) {
             return
         }
 
@@ -264,6 +269,7 @@ class StoryViewerFragment : Fragment(),
                         isFirstResource: Boolean
                     ): Boolean {
                         binding.storyDisplayVideoProgress.hide()
+                        onImagePrepared = true
                         toggleLoadMode(false)
                         return false
                     }
@@ -545,11 +551,23 @@ class StoryViewerFragment : Fragment(),
     }
 
     fun pauseCurrentStory() {
+        Log.e("StoryViewerFragment", "pauseCurrentStory onResumeCalled: $onResumeCalled")
+
         simpleExoPlayer?.playWhenReady = false
         binding.storiesProgressView.pause()
     }
 
     fun resumeCurrentStory() {
+        Log.e("StoryViewerFragment", "resumeCurrentStory onResumeCalled: $onResumeCalled")
+        if (stories[counter].isVideo() && !onVideoPrepared) {
+            simpleExoPlayer?.playWhenReady = false
+            return
+        }
+
+        if (stories[counter].isImage() && !onImagePrepared) {
+            return
+        }
+
         if (onResumeCalled) {
             simpleExoPlayer?.playWhenReady = true
             showStoryOverlay()

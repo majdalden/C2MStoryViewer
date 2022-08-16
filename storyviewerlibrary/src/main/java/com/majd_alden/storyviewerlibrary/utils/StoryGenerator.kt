@@ -196,6 +196,31 @@ object StoryGenerator {
         )
 
 
+        /* val storyUserList = mutableListOf<StoryUser>()
+
+ //        val story = Story(
+ //            storyType = StoryType.VIDEO,
+ //            storyUrl = "https://miran-media.s3.amazonaws.com/resources/2020/03/23/CA_-_25.mp4",
+ //            storyDate = System.currentTimeMillis() - (1 * (24 - 5) * 60 * 60 * 1000)
+ //        )
+         val story = Story(
+             storyType = StoryType.IMAGE,
+ //            storyUrl = "https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+ //            storyUrl = "https://images.pexels.com/photos/1591382/pexels-photo-1591382.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+ //            storyUrl = "https://picsum.photos/3840/2160",
+             storyUrl = "https://i.picsum.photos/id/28/3840/2160.jpg?hmac=mi42yUT385MrZeW9Fq6OLmre--8-pVlylUMXJFDHiXA",
+             storyDate = System.currentTimeMillis() - (1 * (24 - 5) * 60 * 60 * 1000)
+         )
+
+         storyUserList.add(
+             0,
+             StoryUser(
+                 "username$0",
+                 "https://randomuser.me/api/portraits/women/1.jpg",
+                 mutableListOf(story),
+                 true
+             )
+         )*/
 
         return storyUserList
     }
