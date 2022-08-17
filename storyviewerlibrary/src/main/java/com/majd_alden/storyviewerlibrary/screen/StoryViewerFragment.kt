@@ -548,7 +548,8 @@ class StoryViewerFragment : Fragment(),
     }
 
     private fun restorePosition(): Int {
-        return StoryViewerActivity.progressState.get(position)
+        val newPosition = StoryViewerActivity.progressState.get(position)
+        return newPosition
     }
 
     fun pauseCurrentStory() {
