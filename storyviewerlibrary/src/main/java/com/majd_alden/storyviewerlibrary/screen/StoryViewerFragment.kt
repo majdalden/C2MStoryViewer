@@ -165,7 +165,7 @@ class StoryViewerFragment : Fragment(),
             return
         }
         if (BuildConfig.DEBUG) {
-            Log.e("StoryViewerFragment", "$counter: onNext stories[counter]: ${stories[counter]}")
+            Log.e(TAG, "$counter: onNext stories[counter]: ${stories[counter]}")
         }
         ++counter
         savePosition(counter)
