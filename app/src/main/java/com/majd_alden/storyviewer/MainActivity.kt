@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity() {
             )
             StoryViewerFragment.onClickDeleteStoryListener = { userPosition, storyPosition ->
 //                Toast.makeText(this@MainActivity, "userPosition: $userPosition, storyPosition: $storyPosition", Toast.LENGTH_SHORT).show()
-                Log.e(
-                    "MainActivity",
-                    "onCreate onClickDeleteStoryListener userPosition: $userPosition, storyPosition: $storyPosition"
-                )
+                if (BuildConfig.DEBUG)
+                    Log.e(
+                        "MainActivity",
+                        "onCreate onClickDeleteStoryListener userPosition: $userPosition, storyPosition: $storyPosition"
+                    )
 
                 startActivity(
                     StoryViewerActivity.newInstance(
@@ -41,10 +42,11 @@ class MainActivity : AppCompatActivity() {
 
             StoryViewerFragment.onStoryChangedListener = { userPosition, storyPosition ->
 //                Toast.makeText(this@MainActivity, "userPosition: $userPosition, storyPosition: $storyPosition", Toast.LENGTH_SHORT).show()
-                Log.e(
-                    "MainActivity",
-                    "onCreate onStoryChangedListener userPosition: $userPosition, storyPosition: $storyPosition"
-                )
+                if (BuildConfig.DEBUG)
+                    Log.e(
+                        "MainActivity",
+                        "onCreate onStoryChangedListener userPosition: $userPosition, storyPosition: $storyPosition"
+                    )
             }
         }
     }
