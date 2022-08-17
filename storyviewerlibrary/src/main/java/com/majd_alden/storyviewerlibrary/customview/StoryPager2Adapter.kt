@@ -34,5 +34,14 @@ class StoryPager2Adapter constructor(
         return fragment
     }
 
+    /*override fun onBindViewHolder(
+        holder: FragmentViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        holder.setIsRecyclable(false)
+        super.onBindViewHolder(holder, position, payloads)
+    }*/
+
 
 }

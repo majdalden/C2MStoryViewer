@@ -139,6 +139,7 @@ class StoryViewerFragment : Fragment(),
             counter = StoryViewerActivity.progressState.get(currentUserStoryPosition)
             binding.storiesProgressView.startStories(counter)
         }
+        binding.storiesProgressView.makeNewProgressBars(counter)
     }
 
     override fun onPause() {

@@ -50,6 +50,17 @@ class PausableProgressBar @JvmOverloads constructor(
         finishProgress(false)
     }
 
+    fun setMinWithoutCallback2() {
+        maxProgressView?.visibility = View.GONE
+        frontProgressView?.visibility = View.INVISIBLE
+//        maxProgressView!!.setBackgroundResource(R.color.progress_secondary)
+////        maxProgressView!!.visibility = View.VISIBLE
+//        if (animation != null) {
+//            animation!!.setAnimationListener(null)
+//            animation!!.cancel()
+//        }
+    }
+
     fun setMinWithoutCallback() {
         maxProgressView!!.setBackgroundResource(R.color.progress_secondary)
         maxProgressView!!.visibility = View.VISIBLE
