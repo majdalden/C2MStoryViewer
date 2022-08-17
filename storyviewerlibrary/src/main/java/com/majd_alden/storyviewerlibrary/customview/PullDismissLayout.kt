@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import com.majd_alden.storyviewerlibrary.callback.TouchCallbacks
+import kotlin.math.abs
 
 class PullDismissLayout : ConstraintLayout {
     private var listener: Listener? = null
@@ -182,7 +183,7 @@ class PullDismissLayout : ConstraintLayout {
         @SuppressLint("NewApi")
         override fun onViewPositionChanged(view: View, left: Int, top: Int, dx: Int, dy: Int) {
             val range = pullDismissLayout.height
-            val moved = Math.abs(top - startTop)
+            val moved = abs(top - startTop)
             if (range > 0) {
                 dragPercent = moved.toFloat() / range.toFloat()
             }
@@ -203,7 +204,7 @@ class PullDismissLayout : ConstraintLayout {
 
         override fun onViewReleased(view: View, xv: Float, yv: Float) {
             dismissed = dragPercent >= 0.50f ||
-                    Math.abs(xv) > pullDismissLayout.minFlingVelocity && dragPercent > 0.20f
+                    abs(xv) > pullDismissLayout.minFlingVelocity && dragPercent > 0.20f
             val finalTop = if (dismissed) pullDismissLayout.height else startTop
             if (!dismissed) {
                 pullDismissLayout.getmTouchCallbacks()?.touchUp()

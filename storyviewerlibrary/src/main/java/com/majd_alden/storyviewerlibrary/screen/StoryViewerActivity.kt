@@ -63,6 +63,8 @@ class StoryViewerActivity : AppCompatActivity(),
 
         setUpPager()
 
+//        binding.rootPDL.setBackgroundColor(Color.TRANSPARENT)
+//        binding.rootPDL.setAnimateAlpha(true)
         binding.rootPDL.setListener(object : PullDismissLayout.Listener {
             override fun onDismissed() {
                 finish()
