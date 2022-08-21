@@ -1,6 +1,7 @@
 package com.majd_alden.storyviewerlibrary.utils
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -32,19 +33,21 @@ class PaletteExtraction(
             }
 
             withContext(Dispatchers.Main) {
+                if (palette == null) return@withContext
+                val view = viewWeakReference.get() ?: return@withContext
                 try {
-                    if (palette == null) return@withContext
-                    val view = viewWeakReference.get() ?: return@withContext
                     val drawable = GradientDrawable(
                         GradientDrawable.Orientation.TOP_BOTTOM,
                         intArrayOf(
-                            palette.getDarkVibrantColor(0),
-                            palette.getLightMutedColor(0)
+                            palette.getDarkVibrantColor(Color.BLACK),
+                            palette.getLightMutedColor(Color.BLACK)
                         )
                     )
                     drawable.cornerRadius = 0f
+                    view.setBackgroundColor(Color.TRANSPARENT)
                     view.background = drawable
                 } catch (e: Throwable) {
+                    view.setBackgroundColor(Color.BLACK)
                     e.printStackTrace()
                 }
             }

@@ -3,6 +3,7 @@ package com.majd_alden.storyviewerlibrary.screen
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -41,10 +43,7 @@ import com.majd_alden.storyviewerlibrary.data.Story
 import com.majd_alden.storyviewerlibrary.data.StoryTextFont
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.FragmentStoryViewerBinding
-import com.majd_alden.storyviewerlibrary.utils.CacheDataSourceFactory
-import com.majd_alden.storyviewerlibrary.utils.OnSwipeTouchListener
-import com.majd_alden.storyviewerlibrary.utils.hide
-import com.majd_alden.storyviewerlibrary.utils.show
+import com.majd_alden.storyviewerlibrary.utils.*
 import java.util.*
 
 class StoryViewerFragment : Fragment(),
@@ -181,6 +180,8 @@ class StoryViewerFragment : Fragment(),
         simpleExoPlayer?.stop()
         val story = stories[counter]
         if (story.isVideo()) {
+            binding.root.setBackgroundColor(Color.BLACK)
+
             binding.storyDisplayVideo.show()
             binding.storyDisplayImage.hide()
             binding.storyDisplayText.hide()
@@ -207,14 +208,17 @@ class StoryViewerFragment : Fragment(),
 
             checkSizeText(activity, binding.storyDisplayText, story.maxStoryTextLength)
 
-            try {
+            val backgroundColor = try {
                 if (story.storyTextBackgroundColor.trim().isNotEmpty())
-                    binding.storyDisplayText.setBackgroundColor(Color.parseColor(story.storyTextBackgroundColor))
+                    Color.parseColor(story.storyTextBackgroundColor)
                 else
-                    binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+                    Color.BLACK
             } catch (e: Exception) {
-                binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+                Color.BLACK
             }
+
+            binding.storyDisplayText.setBackgroundColor(backgroundColor)
+            binding.root.setBackgroundColor(backgroundColor)
 
             try {
                 if (story.storyTextColor.trim().isNotEmpty())
@@ -244,7 +248,7 @@ class StoryViewerFragment : Fragment(),
 //            toggleLoadMode(true)
 
             Glide.with(this)
-                .load(stories[counter].storyUrl)
+                .load(story.storyUrl)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -273,6 +277,24 @@ class StoryViewerFragment : Fragment(),
                         onImagePrepared = true
                         toggleLoadMode(false)
 //                        resumeCurrentStory()
+
+
+                        binding.root.setBackgroundColor(Color.BLACK)
+
+                        try {
+                            if (resource != null) {
+                                val pe = PaletteExtraction(
+                                    binding.root,
+                                    lifecycleScope,
+                                    (resource as? BitmapDrawable?)?.bitmap
+                                )
+                                pe.execute()
+                            }
+                        } catch (e: Throwable) {
+                            binding.root.setBackgroundColor(Color.BLACK)
+                            e.printStackTrace()
+                        }
+
                         return false
                     }
                 })
@@ -282,7 +304,7 @@ class StoryViewerFragment : Fragment(),
         }*/
 
         val cal: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
-            timeInMillis = stories[counter].storyDate
+            timeInMillis = story.storyDate
         }
         binding.storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
 

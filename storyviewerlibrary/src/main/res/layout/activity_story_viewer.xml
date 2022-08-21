@@ -19,8 +19,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:layout_height="match_parent" />
 
 
 </com.majd_alden.storyviewerlibrary.customview.PullDismissLayout>
