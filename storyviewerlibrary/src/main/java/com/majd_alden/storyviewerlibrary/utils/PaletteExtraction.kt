@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.palette.graphics.Palette
@@ -52,6 +53,22 @@ class PaletteExtraction(
                     val lightMutedSwatch = palette.lightMutedSwatch
                     val lightMutedSwatchRGB = palette.lightMutedSwatch?.rgb ?: 0
 
+                    Log.e(
+                        "PaletteExtraction", "vibrantSwatch: $vibrantSwatch," +
+                                " vibrantSwatchRGB: $vibrantSwatchRGB," +
+                                " mutedSwatch: $mutedSwatch" +
+                                " mutedSwatchRGB: $mutedSwatchRGB" +
+                                " dominantSwatch: $dominantSwatch" +
+                                " dominantSwatchRGB: $dominantSwatchRGB" +
+                                " darkVibrantSwatch: $darkVibrantSwatch" +
+                                " darkVibrantSwatchRGB: $darkVibrantSwatchRGB" +
+                                " darkMutedSwatch: $darkMutedSwatch" +
+                                " darkMutedSwatchRGB: $darkMutedSwatchRGB" +
+                                " lightVibrantSwatch: $lightVibrantSwatch" +
+                                " lightVibrantSwatchRGB: $lightVibrantSwatchRGB" +
+                                " lightMutedSwatch: $lightMutedSwatch" +
+                                " lightMutedSwatchRGB: $lightMutedSwatchRGB"
+                    )
 
                     val colors = intArrayOf(
                         if (darkVibrantSwatchRGB != 0) darkVibrantSwatchRGB else darkMutedSwatchRGB,
