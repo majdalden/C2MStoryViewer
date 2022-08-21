@@ -4,12 +4,10 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.SparseIntArray
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
@@ -376,10 +374,5 @@ class StoryViewerActivity : AppCompatActivity(),
         var onShowListener: (() -> Unit)? = null
         var onFinishListener: (() -> Boolean)? = null
         var onDismissListener: (() -> Unit)? = null
-        var isMakeBackgroundPalette: Boolean = true
-        var isMakeBackgroundColor: Boolean = false
-
-        @ColorInt
-        var backgroundColor: Int = Color.BLACK
     }
 }
