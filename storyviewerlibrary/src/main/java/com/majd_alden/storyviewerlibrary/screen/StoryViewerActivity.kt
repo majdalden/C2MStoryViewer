@@ -377,7 +377,7 @@ class StoryViewerActivity : AppCompatActivity(),
         var onFinishListener: (() -> Boolean)? = null
         var onDismissListener: (() -> Unit)? = null
         var isMakeBackgroundPalette: Boolean = true
-        var isMakeBackgroundColor: Boolean = true
+        var isMakeBackgroundColor: Boolean = false
 
         @ColorInt
         var backgroundColor: Int = Color.BLACK
