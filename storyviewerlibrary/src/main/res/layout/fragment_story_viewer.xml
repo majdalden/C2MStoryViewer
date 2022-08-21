@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@android:color/transparent"
     android:layoutAnimation="@anim/layout_animation_slide_from_bottom">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/storyDisplayVideo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         android:visibility="gone"
         app:surface_type="texture_view" />
 
@@ -18,6 +19,7 @@
         android:id="@+id/storyDisplayImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         android:scaleType="centerInside" />
 
     <androidx.appcompat.widget.AppCompatTextView

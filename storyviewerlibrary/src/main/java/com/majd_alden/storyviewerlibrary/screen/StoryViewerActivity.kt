@@ -374,5 +374,6 @@ class StoryViewerActivity : AppCompatActivity(),
         var onShowListener: (() -> Unit)? = null
         var onFinishListener: (() -> Boolean)? = null
         var onDismissListener: (() -> Unit)? = null
+        var isMakePalette: Boolean = true
     }
 }

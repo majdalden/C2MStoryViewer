@@ -75,5 +75,7 @@ dependencies {
 
 //    implementation 'io.github.igreenwood.loupe:loupe:1.2.2'
 
+    implementation 'androidx.palette:palette:1.0.0'
+
     implementation project(path: ':dialog')
 }
