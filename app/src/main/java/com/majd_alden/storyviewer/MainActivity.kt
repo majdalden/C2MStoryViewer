@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         displayStoryBtn.setOnClickListener {
 //            startActivity(Intent(this, StoryViewerActivity::class.java))
 //            startActivity(StoryViewerActivity.newInstance(this@MainActivity, mutableListOf()))
+            StoryViewerActivity.isMakeBackgroundColor = true
             startActivity(
                 StoryViewerActivity.newInstance(
                     this@MainActivity,

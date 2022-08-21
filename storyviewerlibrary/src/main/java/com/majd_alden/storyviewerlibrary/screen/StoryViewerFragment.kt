@@ -273,7 +273,14 @@ class StoryViewerFragment : Fragment(),
                         toggleLoadMode(false)
 //                        resumeCurrentStory()
 
-                        if (StoryViewerActivity.isMakeBackgroundPalette) {
+                        if (StoryViewerActivity.isMakeBackgroundColor) {
+                            try {
+                                binding.root.setBackgroundColor(StoryViewerActivity.backgroundColor)
+                            } catch (e: Throwable) {
+                                binding.root.setBackgroundColor(Color.BLACK)
+                                e.printStackTrace()
+                            }
+                        } else if (StoryViewerActivity.isMakeBackgroundPalette) {
                             try {
                                 if (resource != null) {
                                     val pe = PaletteExtraction(
@@ -284,13 +291,6 @@ class StoryViewerFragment : Fragment(),
                                     pe.execute()
                                 }
                             } catch (e: Throwable) {
-                                e.printStackTrace()
-                            }
-                        } else if (StoryViewerActivity.isMakeBackgroundColor) {
-                            try {
-                                binding.root.setBackgroundColor(StoryViewerActivity.backgroundColor)
-                            } catch (e: Throwable) {
-                                binding.root.setBackgroundColor(Color.BLACK)
                                 e.printStackTrace()
                             }
                         }
