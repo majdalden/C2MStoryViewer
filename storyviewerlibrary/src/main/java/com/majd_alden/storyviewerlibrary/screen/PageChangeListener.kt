@@ -30,7 +30,6 @@ abstract class PageChangeListener : OnPageChangeListener {
             }
             SCROLL_STATE_DRAGGING -> {
                 if (BuildConfig.DEBUG) {
-
                     Log.d("onPageScrollState", " SCROLL_STATE_DRAGGING")
                 }
                 pageBeforeDragging = currentPage

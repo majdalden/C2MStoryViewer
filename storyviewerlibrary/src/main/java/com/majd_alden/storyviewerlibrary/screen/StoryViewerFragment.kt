@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -43,10 +45,7 @@ import com.majd_alden.storyviewerlibrary.data.Story
 import com.majd_alden.storyviewerlibrary.data.StoryTextFont
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.FragmentStoryViewerBinding
-import com.majd_alden.storyviewerlibrary.utils.CacheDataSourceFactory
-import com.majd_alden.storyviewerlibrary.utils.OnSwipeTouchListener
-import com.majd_alden.storyviewerlibrary.utils.hide
-import com.majd_alden.storyviewerlibrary.utils.show
+import com.majd_alden.storyviewerlibrary.utils.*
 import java.util.*
 
 class StoryViewerFragment : Fragment(),
@@ -141,6 +140,7 @@ class StoryViewerFragment : Fragment(),
             counter = StoryViewerActivity.progressState.get(currentUserStoryPosition)
             binding.storiesProgressView.startStories(counter)
         }
+        binding.storiesProgressView.makeNewProgressBars(counter)
     }
 
     override fun onPause() {
@@ -166,7 +166,7 @@ class StoryViewerFragment : Fragment(),
             return
         }
         if (BuildConfig.DEBUG) {
-            Log.e("StoryViewerFragment", "$counter: onNext stories[counter]: ${stories[counter]}")
+            Log.e(TAG, "$counter: onNext stories[counter]: ${stories[counter]}")
         }
         ++counter
         savePosition(counter)
@@ -182,10 +182,56 @@ class StoryViewerFragment : Fragment(),
         simpleExoPlayer?.stop()
         val story = stories[counter]
         if (story.isVideo()) {
+            binding.root.setBackgroundColor(Color.BLACK)
+
             binding.storyDisplayVideo.show()
             binding.storyDisplayImage.hide()
+//            binding.storyDisplayImage.visibility = View.INVISIBLE
             binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
+
+
+            /*Glide.with(this)
+                .load(story.storyUrl)
+                .addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayImage.hide()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayImage.hide()
+
+                        try {
+                            if (resource != null) {
+                                val pe = PaletteExtraction(
+                                    binding.root,
+                                    lifecycleScope,
+                                    (resource as? BitmapDrawable?)?.bitmap
+                                )
+                                pe.execute()
+                            }
+                        } catch (e: Throwable) {
+                            binding.root.setBackgroundColor(Color.BLACK)
+                            e.printStackTrace()
+                        }
+
+                        return false
+                    }
+                })
+                .into(binding.storyDisplayImage)*/
+
             initializePlayer()
         } else if (story.isText()) {
             binding.storyDisplayVideo.hide()
@@ -208,14 +254,17 @@ class StoryViewerFragment : Fragment(),
 
             checkSizeText(activity, binding.storyDisplayText, story.maxStoryTextLength)
 
-            try {
+            val backgroundColor = try {
                 if (story.storyTextBackgroundColor.trim().isNotEmpty())
-                    binding.storyDisplayText.setBackgroundColor(Color.parseColor(story.storyTextBackgroundColor))
+                    Color.parseColor(story.storyTextBackgroundColor)
                 else
-                    binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+                    Color.BLACK
             } catch (e: Exception) {
-                binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+                Color.BLACK
             }
+
+            binding.storyDisplayText.setBackgroundColor(backgroundColor)
+            binding.root.setBackgroundColor(backgroundColor)
 
             try {
                 if (story.storyTextColor.trim().isNotEmpty())
@@ -242,10 +291,10 @@ class StoryViewerFragment : Fragment(),
             binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
 
-            toggleLoadMode(true)
+//            toggleLoadMode(true)
 
             Glide.with(this)
-                .load(stories[counter].storyUrl)
+                .load(story.storyUrl)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -253,8 +302,13 @@ class StoryViewerFragment : Fragment(),
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Glide onLoadFailed Error Message: ${e?.message}")
+                            Log.e(TAG, "Glide onLoadFailed Error Exception: ", e)
+                            e?.printStackTrace()
+                        }
                         binding.storyDisplayVideoProgress.hide()
-                        toggleLoadMode(false)
+//                        toggleLoadMode(false)
                         if (counter == stories.size.minus(1)) {
                             pageViewOperator?.nextPageView()
                         } else {
@@ -273,6 +327,23 @@ class StoryViewerFragment : Fragment(),
                         binding.storyDisplayVideoProgress.hide()
                         onImagePrepared = true
                         toggleLoadMode(false)
+//                        resumeCurrentStory()
+
+
+                        try {
+                            if (resource != null) {
+                                val pe = PaletteExtraction(
+                                    binding.root,
+                                    lifecycleScope,
+                                    (resource as? BitmapDrawable?)?.bitmap
+                                )
+                                pe.execute()
+                            }
+                        } catch (e: Throwable) {
+                            binding.root.setBackgroundColor(Color.BLACK)
+                            e.printStackTrace()
+                        }
+
                         return false
                     }
                 })
@@ -282,7 +353,7 @@ class StoryViewerFragment : Fragment(),
         }*/
 
         val cal: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
-            timeInMillis = stories[counter].storyDate
+            timeInMillis = story.storyDate
         }
         binding.storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
 
@@ -327,6 +398,7 @@ class StoryViewerFragment : Fragment(),
         }
 
         binding.storyDisplayVideo.setShutterBackgroundColor(Color.BLACK)
+
         binding.storyDisplayVideo.player = simpleExoPlayer
         simpleExoPlayer?.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
@@ -556,15 +628,28 @@ class StoryViewerFragment : Fragment(),
     }
 
     private fun restorePosition(): Int {
-        return StoryViewerActivity.progressState.get(position)
+        val newPosition = StoryViewerActivity.progressState.get(position)
+        return newPosition
     }
 
     fun pauseCurrentStory() {
+        if (BuildConfig.DEBUG)
+            Log.e(
+                TAG,
+                "${counter}-pauseCurrentStory stories[counter].storyType: ${stories[counter].storyType}, onResumeCalled: $onResumeCalled, onVideoPrepared: $onVideoPrepared, onImagePrepared: $onImagePrepared"
+            )
+
         simpleExoPlayer?.playWhenReady = false
         binding.storiesProgressView.pause()
     }
 
     fun resumeCurrentStory() {
+        if (BuildConfig.DEBUG)
+            Log.e(
+                TAG,
+                "${counter}-resumeCurrentStory stories[counter].storyType: ${stories[counter].storyType}, onResumeCalled: $onResumeCalled, onVideoPrepared: $onVideoPrepared, onImagePrepared: $onImagePrepared"
+            )
+
         if (stories[counter].isVideo() && !onVideoPrepared) {
             simpleExoPlayer?.playWhenReady = false
             return

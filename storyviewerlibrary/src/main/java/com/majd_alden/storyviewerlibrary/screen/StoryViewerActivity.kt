@@ -63,6 +63,8 @@ class StoryViewerActivity : AppCompatActivity(),
 
         setUpPager()
 
+//        binding.rootPDL.setBackgroundColor(Color.TRANSPARENT)
+//        binding.rootPDL.setAnimateAlpha(true)
         binding.rootPDL.setListener(object : PullDismissLayout.Listener {
             override fun onDismissed() {
                 finish()
@@ -241,6 +243,21 @@ class StoryViewerActivity : AppCompatActivity(),
     private var prevDragPosition = 0
 
     private fun fakeDrag(forward: Boolean) {
+        /*val itemCount = binding.viewPager2.adapter?.itemCount ?: return
+        val currentItem = binding.viewPager2.currentItem
+        if (forward){
+            if (currentItem + 1 < itemCount) {
+                binding.viewPager2.setCurrentItem(currentItem + 1, true)
+            }else{
+                Toast.makeText(this, "All stories displayed.", Toast.LENGTH_LONG).show()
+            }
+        }else{
+            if (currentItem > 0) {
+                binding.viewPager2.setCurrentItem(currentItem - 1, true)
+            }else{
+                Toast.makeText(this, "This is first story.", Toast.LENGTH_LONG).show()
+            }
+        }*/
         if (prevDragPosition == 0 && binding.viewPager2.beginFakeDrag()) {
             ValueAnimator.ofInt(0, binding.viewPager2.width).apply {
                 duration = 400L

@@ -148,6 +148,16 @@ class StoriesProgressView @JvmOverloads constructor(
         }
     }
 
+    fun makeNewProgressBars(from: Int) {
+        for (count in progressBars.indices) {
+            if (count <= from) {
+                continue
+            }
+            progressBars[count].clear()
+            progressBars[count].setMinWithoutCallback2()
+        }
+    }
+
     fun destroy() {
         for (p in progressBars) {
             p.clear()

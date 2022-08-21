@@ -35,6 +35,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
+        debug {
+            minifyEnabled true
+            renderscriptDebuggable true
+            jniDebuggable true
+        }
     }
 
     compileOptions {
