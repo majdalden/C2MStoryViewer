@@ -2,6 +2,7 @@ package com.majd_alden.storyviewerlibrary.utils
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -36,18 +37,48 @@ class PaletteExtraction(
                 if (palette == null) return@withContext
                 val view = viewWeakReference.get() ?: return@withContext
                 try {
-                    val drawable = GradientDrawable(
-                        GradientDrawable.Orientation.TOP_BOTTOM,
-                        intArrayOf(
-                            palette.getDarkVibrantColor(Color.BLACK),
-                            palette.getLightMutedColor(Color.BLACK)
-                        )
+                    val vibrantSwatch = palette.vibrantSwatch
+                    val vibrantSwatchRGB = palette.vibrantSwatch?.rgb ?: 0
+                    val mutedSwatch = palette.mutedSwatch
+                    val mutedSwatchRGB = palette.mutedSwatch?.rgb ?: 0
+                    val dominantSwatch = palette.dominantSwatch
+                    val dominantSwatchRGB = palette.dominantSwatch?.rgb ?: 0
+                    val darkVibrantSwatch = palette.darkVibrantSwatch
+                    val darkVibrantSwatchRGB = palette.darkVibrantSwatch?.rgb ?: 0
+                    val darkMutedSwatch = palette.darkMutedSwatch
+                    val darkMutedSwatchRGB = palette.darkMutedSwatch?.rgb ?: 0
+                    val lightVibrantSwatch = palette.lightVibrantSwatch
+                    val lightVibrantSwatchRGB = palette.lightVibrantSwatch?.rgb ?: 0
+                    val lightMutedSwatch = palette.lightMutedSwatch
+                    val lightMutedSwatchRGB = palette.lightMutedSwatch?.rgb ?: 0
+
+
+                    val colors = intArrayOf(
+                        if (darkVibrantSwatchRGB != 0) darkVibrantSwatchRGB else darkMutedSwatchRGB,
+                        if (lightMutedSwatchRGB != 0) lightMutedSwatchRGB else lightVibrantSwatchRGB
                     )
-                    drawable.cornerRadius = 0f
-                    view.setBackgroundColor(Color.TRANSPARENT)
+                        .filter { it != 0 }
+                        .toMutableList()
+
+                    if (colors.isEmpty()) {
+                        colors.add(Color.BLACK)
+                    }
+
+                    val drawable = if (colors.size == 1) {
+                        ColorDrawable(colors.first())
+                    } else {
+                        val backgroundDrawable = GradientDrawable(
+                            GradientDrawable.Orientation.TOP_BOTTOM,
+                            colors.toIntArray()
+                        )
+                        backgroundDrawable.cornerRadius = 0f
+
+                        backgroundDrawable
+                    }
+
                     view.background = drawable
                 } catch (e: Throwable) {
-                    view.setBackgroundColor(Color.BLACK)
+                    view.background = ColorDrawable(Color.BLACK)
                     e.printStackTrace()
                 }
             }

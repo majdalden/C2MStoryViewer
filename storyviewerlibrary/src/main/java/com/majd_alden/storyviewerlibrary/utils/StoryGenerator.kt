@@ -107,6 +107,34 @@ object StoryGenerator {
         )
         stories.add(
             Story(
+                storyType = StoryType.IMAGE,
+                storyUrl = "https://app.hony.us/story/file/daf550e6-88d2-4aae-b6d3-d0925623c349.jpg",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 7) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.IMAGE,
+                storyUrl = "https://app.hony.us/story/file/8aa5b2f4-ad67-45ce-92be-d5f2128792e8.jpg",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 7) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.IMAGE,
+                storyUrl = "https://app.hony.us/story/file/dcc8a32c-304a-4499-a154-87806e857462.png",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 7) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
+                storyType = StoryType.IMAGE,
+                storyUrl = "https://app.hony.us/story/file/b0687b74-c17f-4833-818d-fb0bca6ea108.png",
+                storyDate = System.currentTimeMillis() - (1 * (24 - 7) * 60 * 60 * 1000)
+            )
+        )
+        stories.add(
+            Story(
                 storyType = StoryType.TEXT,
                 storyText = "emfvpokeropvfcre\ntgopetrkfopr\nrkfcreopfr",
                 storyTextFont = StoryTextFont.CAIRO_BOLD,

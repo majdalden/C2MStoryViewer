@@ -184,8 +184,52 @@ class StoryViewerFragment : Fragment(),
 
             binding.storyDisplayVideo.show()
             binding.storyDisplayImage.hide()
+//            binding.storyDisplayImage.visibility = View.INVISIBLE
             binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
+
+
+            /*Glide.with(this)
+                .load(story.storyUrl)
+                .addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayImage.hide()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.storyDisplayImage.hide()
+
+                        try {
+                            if (resource != null) {
+                                val pe = PaletteExtraction(
+                                    binding.root,
+                                    lifecycleScope,
+                                    (resource as? BitmapDrawable?)?.bitmap
+                                )
+                                pe.execute()
+                            }
+                        } catch (e: Throwable) {
+                            binding.root.setBackgroundColor(Color.BLACK)
+                            e.printStackTrace()
+                        }
+
+                        return false
+                    }
+                })
+                .into(binding.storyDisplayImage)*/
+
             initializePlayer()
         } else if (story.isText()) {
             binding.storyDisplayVideo.hide()
@@ -256,6 +300,11 @@ class StoryViewerFragment : Fragment(),
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Glide onLoadFailed Error Message: ${e?.message}")
+                            Log.e(TAG, "Glide onLoadFailed Error Exception: ", e)
+                            e?.printStackTrace()
+                        }
                         binding.storyDisplayVideoProgress.hide()
 //                        toggleLoadMode(false)
                         if (counter == stories.size.minus(1)) {
@@ -278,8 +327,6 @@ class StoryViewerFragment : Fragment(),
                         toggleLoadMode(false)
 //                        resumeCurrentStory()
 
-
-                        binding.root.setBackgroundColor(Color.BLACK)
 
                         try {
                             if (resource != null) {
@@ -349,6 +396,7 @@ class StoryViewerFragment : Fragment(),
         }
 
         binding.storyDisplayVideo.setShutterBackgroundColor(Color.BLACK)
+
         binding.storyDisplayVideo.player = simpleExoPlayer
         simpleExoPlayer?.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
