@@ -177,13 +177,62 @@ class StoryViewerFragment : Fragment(),
     }
 
     private fun updateStory() {
+        binding.root.setBackgroundColor(Color.TRANSPARENT)
+
         simpleExoPlayer?.stop()
         val story = stories[counter]
         if (story.isVideo()) {
             binding.storyDisplayVideo.show()
-            binding.storyDisplayImage.hide()
+//            binding.storyDisplayImage.hide()
+            binding.storyDisplayImage.visibility = View.INVISIBLE
             binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
+
+            if (StoryViewerActivity.isMakeBackgroundColor) {
+                binding.root.setBackgroundColor(Color.BLACK)
+            } else if (StoryViewerActivity.isMakeBackgroundPalette) {
+                Glide.with(this)
+                    .load(story.storyUrl)
+                    .addListener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            binding.storyDisplayImage.hide()
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: com.bumptech.glide.load.DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            try {
+                                if (resource != null) {
+                                    val pe = PaletteExtraction(
+                                        binding.root,
+                                        lifecycleScope,
+                                        (resource as? BitmapDrawable?)?.bitmap
+                                    )
+                                    pe.execute()
+                                }
+                            } catch (e: Throwable) {
+                                e.printStackTrace()
+                            }
+
+                            binding.storyDisplayImage.hide()
+                            return false
+                        }
+                    })
+                    .into(binding.storyDisplayImage)
+            } else {
+                binding.root.setBackgroundColor(Color.TRANSPARENT)
+            }
+
             initializePlayer()
         } else if (story.isText()) {
             binding.storyDisplayVideo.hide()
@@ -206,14 +255,20 @@ class StoryViewerFragment : Fragment(),
 
             checkSizeText(activity, binding.storyDisplayText, story.maxStoryTextLength)
 
-            try {
-                if (story.storyTextBackgroundColor.trim().isNotEmpty())
-                    binding.storyDisplayText.setBackgroundColor(Color.parseColor(story.storyTextBackgroundColor))
-                else
-                    binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+
+            val backgroundColor = try {
+                if (story.storyTextBackgroundColor.trim().isNotEmpty()) {
+                    Color.parseColor(story.storyTextBackgroundColor)
+                } else {
+                    Color.BLACK
+                }
             } catch (e: Exception) {
-                binding.storyDisplayText.setBackgroundColor(Color.BLACK)
+                Color.BLACK
             }
+
+            binding.storyDisplayText.setBackgroundColor(backgroundColor)
+            binding.root.setBackgroundColor(backgroundColor)
+
 
             try {
                 if (story.storyTextColor.trim().isNotEmpty())
@@ -243,7 +298,7 @@ class StoryViewerFragment : Fragment(),
 //            toggleLoadMode(true)
 
             Glide.with(this)
-                .load(stories[counter].storyUrl)
+                .load(story.storyUrl)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -304,7 +359,7 @@ class StoryViewerFragment : Fragment(),
         }*/
 
         val cal: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
-            timeInMillis = stories[counter].storyDate
+            timeInMillis = story.storyDate
         }
         binding.storyDisplayTime.text = DateFormat.format("MM-dd-yyyy HH:mm:ss", cal).toString()
 
