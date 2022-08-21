@@ -5,22 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
-    android:layoutAnimation="@anim/layout_animation_slide_from_bottom">
+    android:layoutAnimation="@anim/layout_animation_slide_from_bottom"
+    tools:layoutAnimation="@null">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/storyDisplayVideo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@android:color/transparent"
         android:visibility="gone"
-        app:surface_type="texture_view" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:surface_type="texture_view"
+        tools:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/storyDisplayImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@android:color/transparent"
-        android:scaleType="centerInside" />
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/storyDisplayText"
@@ -39,11 +51,14 @@
         android:padding="16dp"
         android:textColor="@android:color/white"
         android:textSize="50sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="rk3pfm3profkmroip3wfciop3" />
+        tools:text="rk3pfm3profkmroip3wfciop3 dwfvvwedgvwevgw bewbv evb\neqfceqfewfew"
+        tools:textColor="@android:color/white"
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/storyDisplayVideoProgress"
