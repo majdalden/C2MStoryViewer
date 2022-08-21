@@ -10,15 +10,6 @@
     tools:context="com.majd_alden.storyviewerlibrary.screen.StoryViewerActivity"
     tools:layoutAnimation="@null">
 
-    <!--
-        <com.majd_alden.storyviewerlibrary.customview.FixedViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="match_parent"
-            android:background="@android:color/black" />
-    -->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
