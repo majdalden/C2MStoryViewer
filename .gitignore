@@ -17,3 +17,7 @@
 /captures
 .externalNativeBuild
 .cxx
+
+/app/build/
+/dialog/build/
+/storyviewerlibrry/build/
