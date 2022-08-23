@@ -49,7 +49,7 @@ import com.majd_alden.storyviewerlibrary.utils.*
 import java.util.*
 
 class StoryViewerFragment : Fragment(),
-    StoriesProgressView.StoriesListener {
+    StoriesProgressView.StoriesListener, OnBottomSheetDismiss {
 
     private lateinit var binding: FragmentStoryViewerBinding
     private val position: Int by
@@ -62,8 +62,7 @@ class StoryViewerFragment : Fragment(),
         ) as StoryUser)
     }
 
-    private val stories: MutableList<Story> by
-    lazy { storyUser.stories }
+    private val stories: MutableList<Story> by lazy { storyUser.stories }
 
     private var simpleExoPlayer: ExoPlayer? = null
     private lateinit var mediaDataSourceFactory: DataSource.Factory
@@ -556,6 +555,7 @@ class StoryViewerFragment : Fragment(),
                                     moreMenuDialogBottom?.dismiss()
 //                                        onComplete()
                                     toggleLoadMode(isLoading = false)
+                                    stories
                                     onClickDeleteStoryListener?.invoke(
                                         position,
                                         counter
@@ -587,16 +587,36 @@ class StoryViewerFragment : Fragment(),
                 moreMenuDialogBottom?.addBottomItem(
                     getString(R.string.view_audience)
                 ) { _ ->
-              
 
-                    val intent = Intent(VIEW_VIEWERS_ACTION)
-                    intent.putExtra("story_id" , currentItem)
+//                    val fragment = StoryUserListDialogFragment()
+//                    fragment.listener = this
+//                    var bundle =  Bundle().apply {
+//                        putInt(ARG_ITEM_COUNT, 10)
+//                    }
+//                    fragment.arguments = bundle
+//                    childFragmentManager.beginTransaction()
+//
+//                        .show(fragment)
+//                        .commit()
+                    StoryUserListDialogFragment.newInstance( stories[position].id ?: 0)
+                        .show(childFragmentManager , null)
+
+                    StoryUserListDialogFragment.onDismiss = {
+                        toggleLoadMode(isLoading = false)
+                        // TODO Handle it
+                        StoryUserListDialogFragment.onDismiss = null
+                    }
+
+                    val intent = Intent(GET_VIEW_VIEWERS_ACTION)
+                    stories[position].id?.let {
+                        intent.putExtra("story_id" ,  it)
+                    }
                     LocalBroadcastManager.getInstance(requireContext())
                         .sendBroadcast(intent)
 
                     isUserDismissMoreMenu = true
                     moreMenuDialogBottom?.dismiss()
-                    toggleLoadMode(isLoading = false)
+//                    toggleLoadMode(isLoading = false)
                 }
             }
         }
@@ -718,7 +738,8 @@ class StoryViewerFragment : Fragment(),
     companion object {
         //        private const val TAG = "StoryViewerFragment"
 
-        public const val VIEW_VIEWERS_ACTION = "com.story.view.open.viewers"
+        public const val GET_VIEW_VIEWERS_ACTION = "com.story.view.get.viewers"
+        public const val SET_VIEW_VIEWERS_ACTION = "com.story.view.set.viewers"
 
         private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
@@ -737,5 +758,9 @@ class StoryViewerFragment : Fragment(),
             null
         var onStoryChangedListener: ((userPosition: Int, storyPosition: Int) -> Unit)? = null
 
+    }
+
+    override fun onDismiss() {
+        toggleLoadMode(false)
     }
 }

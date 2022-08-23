@@ -15,7 +15,8 @@ data class Story(
     val storyTextTypeface: Typeface? = null,
     val maxStoryTextLength: Int = 300,
     val maxStoryTextLines: Int = 10,
-    val storyDate: Long
+    val storyDate: Long,
+    var id: Int? = null
 ) : Parcelable {
 
     /*constructor(parcel: Parcel) : this(
@@ -65,7 +66,9 @@ data class Story(
         } else null,
         maxStoryTextLength = parcel.readInt(),
         maxStoryTextLines = parcel.readInt(),
-        storyDate = parcel.readLong()
+        storyDate = parcel.readLong(),
+        id = parcel.readInt()
+
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -83,6 +86,7 @@ data class Story(
             parcel.writeString(storyUrl)
         }
         parcel.writeLong(storyDate)
+        id?.let { parcel.writeInt(it) }
     }
 
     override fun describeContents(): Int {
