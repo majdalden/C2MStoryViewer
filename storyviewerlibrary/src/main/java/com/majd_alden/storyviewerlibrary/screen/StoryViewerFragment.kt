@@ -152,6 +152,10 @@ class StoryViewerFragment : Fragment(),
         super.onPause()
         simpleExoPlayer?.playWhenReady = false
         binding.storiesProgressView.abandon()
+
+        onResumeCalled = false
+        onVideoPrepared = false
+        onImagePrepared = false
     }
 
     override fun onComplete() {
@@ -185,6 +189,10 @@ class StoryViewerFragment : Fragment(),
 
     private fun updateStory() {
         simpleExoPlayer?.stop()
+
+        onVideoPrepared = false
+        onImagePrepared = false
+
         val story = stories[counter]
         if (story.isVideo()) {
             binding.root.setBackgroundColor(Color.BLACK)
@@ -300,8 +308,10 @@ class StoryViewerFragment : Fragment(),
 
             val delay = System.currentTimeMillis()
             lifecycleScope.launch(Dispatchers.IO) {
+                Log.e(TAG, "lifecycleScope.launch: onImagePrepared: $onImagePrepared")
                 delay(1500L)
                 withContext(Dispatchers.Main) {
+                    Log.e(TAG, "withContext: onImagePrepared: $onImagePrepared")
                     if (!onImagePrepared) {
                         toggleLoadMode(true)
                     }
