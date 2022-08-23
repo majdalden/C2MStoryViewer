@@ -156,6 +156,6 @@ class PausableProgressBar @JvmOverloads constructor(
     }
 
     companion object {
-        private const val DEFAULT_PROGRESS_DURATION = 4000L
+         const val DEFAULT_PROGRESS_DURATION = 4000L
     }
 }

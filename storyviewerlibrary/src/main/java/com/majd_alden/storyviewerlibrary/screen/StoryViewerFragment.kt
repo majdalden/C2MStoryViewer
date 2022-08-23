@@ -40,6 +40,7 @@ import com.google.android.exoplayer2.upstream.BuildConfig
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.majd_alden.storyviewerlibrary.R
+import com.majd_alden.storyviewerlibrary.customview.PausableProgressBar
 import com.majd_alden.storyviewerlibrary.customview.StoriesProgressView
 import com.majd_alden.storyviewerlibrary.data.Story
 import com.majd_alden.storyviewerlibrary.data.StoryTextFont
@@ -51,6 +52,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.math.min
 
 class StoryViewerFragment : Fragment(),
     StoriesProgressView.StoriesListener, OnBottomSheetDismiss {
@@ -296,6 +298,7 @@ class StoryViewerFragment : Fragment(),
 
             binding.root.setBackgroundColor(Color.BLACK)
 
+            val delay = System.currentTimeMillis()
             lifecycleScope.launch(Dispatchers.IO) {
                 delay(1500L)
                 withContext(Dispatchers.Main) {
@@ -350,11 +353,13 @@ class StoryViewerFragment : Fragment(),
                             e.printStackTrace()
                         }
 
-
                         binding.storyDisplayVideoProgress.hide()
+                        var newDuration = System.currentTimeMillis() - delay
+                        newDuration = min(newDuration, 1500)
+                        newDuration += PausableProgressBar.DEFAULT_PROGRESS_DURATION
                         binding.storiesProgressView
                             .getProgressWithIndex(counter)
-                            .setDuration(5500L)
+                            .setDuration(newDuration)
                         onImagePrepared = true
                         toggleLoadMode(false)
 
