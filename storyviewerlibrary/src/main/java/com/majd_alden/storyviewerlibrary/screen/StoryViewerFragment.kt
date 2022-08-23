@@ -46,6 +46,10 @@ import com.majd_alden.storyviewerlibrary.data.StoryTextFont
 import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.databinding.FragmentStoryViewerBinding
 import com.majd_alden.storyviewerlibrary.utils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class StoryViewerFragment : Fragment(),
@@ -290,7 +294,16 @@ class StoryViewerFragment : Fragment(),
             binding.storyDisplayText.hide()
             binding.storyDisplayVideoProgress.show()
 
-//            toggleLoadMode(true)
+            binding.root.setBackgroundColor(Color.BLACK)
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                delay(1500L)
+                withContext(Dispatchers.Main) {
+                    if (!onImagePrepared) {
+                        toggleLoadMode(true)
+                    }
+                }
+            }
 
             Glide.with(this)
                 .load(story.storyUrl)
@@ -323,12 +336,6 @@ class StoryViewerFragment : Fragment(),
                         dataSource: com.bumptech.glide.load.DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.storyDisplayVideoProgress.hide()
-                        onImagePrepared = true
-                        toggleLoadMode(false)
-//                        resumeCurrentStory()
-
-
                         try {
                             if (resource != null) {
                                 val pe = PaletteExtraction(
@@ -342,6 +349,14 @@ class StoryViewerFragment : Fragment(),
                             binding.root.setBackgroundColor(Color.BLACK)
                             e.printStackTrace()
                         }
+
+
+                        binding.storyDisplayVideoProgress.hide()
+                        binding.storiesProgressView
+                            .getProgressWithIndex(counter)
+                            .setDuration(5500L)
+                        onImagePrepared = true
+                        toggleLoadMode(false)
 
                         return false
                     }
@@ -598,8 +613,8 @@ class StoryViewerFragment : Fragment(),
 //
 //                        .show(fragment)
 //                        .commit()
-                    StoryUserListDialogFragment.newInstance( stories[position].id ?: 0)
-                        .show(childFragmentManager , null)
+                    StoryUserListDialogFragment.newInstance(stories[position].id ?: 0)
+                        .show(childFragmentManager, null)
 
                     StoryUserListDialogFragment.onDismiss = {
                         toggleLoadMode(isLoading = false)
@@ -609,7 +624,7 @@ class StoryViewerFragment : Fragment(),
 
                     val intent = Intent(GET_VIEW_VIEWERS_ACTION)
                     stories[position].id?.let {
-                        intent.putExtra("story_id" ,  it)
+                        intent.putExtra("story_id", it)
                     }
                     LocalBroadcastManager.getInstance(requireContext())
                         .sendBroadcast(intent)
@@ -738,8 +753,8 @@ class StoryViewerFragment : Fragment(),
     companion object {
         //        private const val TAG = "StoryViewerFragment"
 
-        public const val GET_VIEW_VIEWERS_ACTION = "com.story.view.get.viewers"
-        public const val SET_VIEW_VIEWERS_ACTION = "com.story.view.set.viewers"
+        const val GET_VIEW_VIEWERS_ACTION = "com.story.view.get.viewers"
+        const val SET_VIEW_VIEWERS_ACTION = "com.story.view.set.viewers"
 
         private const val TAG = "StoryViewerFragment"
         private const val EXTRA_POSITION = "EXTRA_POSITION"
