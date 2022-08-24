@@ -3,18 +3,18 @@ package com.majd_alden.storyviewerlibrary.screen
 import android.content.*
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.imageview.ShapeableImageView
+import com.majd_alden.storyviewerlibrary.BuildConfig
 import com.majd_alden.storyviewerlibrary.R
-import com.majd_alden.storyviewerlibrary.data.StoryUser
 import com.majd_alden.storyviewerlibrary.data.StoryViewer
 import com.majd_alden.storyviewerlibrary.databinding.FragmentItemListDialogListDialogBinding
 import com.majd_alden.storyviewerlibrary.databinding.FragmentItemListDialogListDialogItemBinding
@@ -33,51 +33,42 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
     private val adapter = StoryUserAdapter()
 
     private var storyId: Int? = null
+    private var localBroadcastManager: BroadcastReceiver? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentItemListDialogListDialogBinding.inflate(inflater, container, false)
         return binding.root
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         storyId = arguments?.getInt("story_id", 0) ?: 0
 
-        LocalBroadcastManager.getInstance(requireContext())
-            .registerReceiver(object : BroadcastReceiver() {
-                override fun onReceive(p0: Context?, p1: Intent?) {
+        registerReceiverLocalBroadcastManager()
 
-                    if (p1?.getIntExtra("story_id" , 0)?.equals(storyId ?: 0) == true) {
-                        val users = p1?.extras?.getParcelableArrayList<StoryViewer>("viewers")
-                            ?: arrayListOf()
-
-                        Log.d("DDDD", "onReceive: users in story: ${users.size}")
-                        adapter.models.clear()
-                        adapter.models.addAll(users)
-                        adapter.notifyDataSetChanged()
-
-                    }
-                }
-
-            }, IntentFilter(StoryViewerFragment.SET_VIEW_VIEWERS_ACTION))
-
-        view.findViewById<RecyclerView>(R.id.list)?.apply {
+        binding.audiencesListRV.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@StoryUserListDialogFragment.adapter
         }
     }
 
-    private inner class ViewHolder internal constructor(binding: FragmentItemListDialogListDialogItemBinding) :
+    override fun onResume() {
+        super.onResume()
+        registerReceiverLocalBroadcastManager()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiverLocalBroadcastManager()
+    }
+
+    private inner class ViewHolder(binding: FragmentItemListDialogListDialogItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        internal val image: ShapeableImageView = binding.image
-        internal val text: TextView = binding.text
+        val image: ShapeableImageView = binding.image
+        val text: TextView = binding.text
     }
 
     private inner class StoryUserAdapter : RecyclerView.Adapter<ViewHolder>() {
@@ -97,10 +88,12 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.text.text = models[position].phone ?: ""
+            holder.text.text = models[position].phone
             models[position].pictureUrl.let {
-
-                Glide.with(holder.image).load(it)
+                Glide.with(holder.image)
+                    .load(it)
+                    .placeholder(R.drawable.ic_user_placeholder_km)
+                    .error(R.drawable.ic_user_placeholder_km)
             }
         }
 
@@ -112,6 +105,7 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
     companion object {
 
         var onDismiss: (() -> Unit)? = null
+        var onCancel: (() -> Unit)? = null
 
         // TODO: Customize parameters
         fun newInstance(storyId: Int): StoryUserListDialogFragment =
@@ -126,24 +120,56 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
 
     }
 
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        onCancel?.let { it() }
+    }
+
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         onDismiss?.let { it() }
+    }
+
+    private fun unregisterReceiverLocalBroadcastManager() {
+        val context = context ?: return
+        val localBroadcastManager = localBroadcastManager ?: return
+        LocalBroadcastManager.getInstance(context)
+            .unregisterReceiver(localBroadcastManager)
+    }
+
+    private fun registerReceiverLocalBroadcastManager() {
+        val context = context ?: return
+        if (localBroadcastManager == null) {
+            localBroadcastManager = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    activity?.runOnUiThread {
+                        if (intent?.getIntExtra("story_id", 0)?.equals(storyId ?: 0) == true) {
+                            val users =
+                                intent.extras?.getParcelableArrayList<StoryViewer>("viewers")
+                                    ?: arrayListOf()
+
+                            if (BuildConfig.DEBUG)
+                                Log.d("DDDD", "onReceive: users in story: ${users.size}")
+                            adapter.models.clear()
+                            adapter.models.addAll(users)
+                            adapter.notifyItemRangeInserted(0, users.size)
+//                        adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+        }
+
+        LocalBroadcastManager.getInstance(context)
+            .registerReceiver(
+                localBroadcastManager!!,
+                IntentFilter(StoryViewerFragment.SET_VIEW_VIEWERS_ACTION)
+            )
     }
 
 

@@ -615,7 +615,7 @@ class StoryViewerFragment : Fragment(),
             }
             if (isViewAudienceToMoreMenu) {
                 moreMenuDialogBottom?.addBottomItem(
-                    getString(R.string.view_audience)
+                    getString(R.string.view_audiences)
                 ) { _ ->
 
 //                    val fragment = StoryUserListDialogFragment()
