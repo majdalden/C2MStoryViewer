@@ -30,7 +30,7 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val adapter = StoryUserAdapter()
+    private val adapter: StoryUserAdapter by lazy { StoryUserAdapter() }
 
     private var storyId: Int? = null
     private var localBroadcastManager: BroadcastReceiver? = null
@@ -51,6 +51,8 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
         binding.audiencesListRV.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@StoryUserListDialogFragment.adapter
+
+//            this@StoryUserListDialogFragment.adapter.models.add()
         }
     }
 
@@ -100,6 +102,7 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
             if (pictureUrl.isNotEmpty()) {
                 Glide.with(context)
                     .load(pictureUrl)
+                    .circleCrop()
                     .placeholder(R.drawable.ic_user_placeholder_km)
                     .error(R.drawable.ic_user_placeholder_km)
                     .into(holder.image)
@@ -112,33 +115,18 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
                 /*pictureUrl.let {
                     Glide.with(holder.image)
                         .load(it)
+                        .circleCrop()
                         .placeholder(R.drawable.ic_user_placeholder_km)
                         .error(R.drawable.ic_user_placeholder_km)
                 }*/
+            } else {
+                holder.image.setImageResource(R.drawable.ic_user_placeholder_km)
             }
         }
 
         override fun getItemCount(): Int {
             return models.size
         }
-    }
-
-    companion object {
-
-        var onDismiss: (() -> Unit)? = null
-        var onCancel: (() -> Unit)? = null
-
-        // TODO: Customize parameters
-        fun newInstance(storyId: Int): StoryUserListDialogFragment =
-            StoryUserListDialogFragment().apply {
-                Bundle().apply {
-                    putInt("story_id", storyId)
-                }.let {
-                    arguments = it
-                }
-
-            }
-
     }
 
     override fun onDestroyView() {
@@ -178,8 +166,8 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
                                 Log.d("DDDD", "onReceive: users in story: ${users.size}")
                             adapter.models.clear()
                             adapter.models.addAll(users)
-                            adapter.notifyItemRangeInserted(0, users.size)
-//                        adapter.notifyDataSetChanged()
+//                            adapter.notifyItemRangeInserted(0, users.size)
+                            adapter.notifyDataSetChanged()
                         }
                     }
                 }
@@ -191,6 +179,24 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
                 localBroadcastManager!!,
                 IntentFilter(StoryViewerFragment.SET_VIEW_VIEWERS_ACTION)
             )
+    }
+
+    companion object {
+
+        var onDismiss: (() -> Unit)? = null
+        var onCancel: (() -> Unit)? = null
+
+        // TODO: Customize parameters
+        fun newInstance(storyId: Int): StoryUserListDialogFragment =
+            StoryUserListDialogFragment().apply {
+                Bundle().apply {
+                    putInt("story_id", storyId)
+                }.let {
+                    arguments = it
+                }
+
+            }
+
     }
 
 

@@ -11,8 +11,9 @@
         android:id="@+id/image"
         android:layout_width="@dimen/_32sdp"
         android:layout_height="@dimen/_32sdp"
+        android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
-        app:srcCompat="@drawable/ic_user_placeholder_km" />
+        tools:srcCompat="@drawable/ic_user_placeholder_km" />
 
     <!--
         <com.google.android.material.imageview.ShapeableImageView

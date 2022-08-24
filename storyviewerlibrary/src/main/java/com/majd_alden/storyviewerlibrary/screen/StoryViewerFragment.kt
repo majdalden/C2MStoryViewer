@@ -529,11 +529,22 @@ class StoryViewerFragment : Fragment(),
         binding.storiesProgressView.setAllStoryDuration(4000L)
         binding.storiesProgressView.setStoriesListener(this)
 
-        Glide.with(this)
-            .load(storyUser.profilePicUrl)
-            .circleCrop()
-            .into(binding.storyDisplayProfilePicture)
-        binding.storyDisplayNick.text = storyUser.username
+        val phone = storyUser.phone.trim()
+        val fullName = storyUser.username.trim()
+        val pictureUrl = storyUser.profilePicUrl.trim()
+
+        binding.storyDisplayNick.text = fullName.ifEmpty { phone }
+
+        if (pictureUrl.isNotEmpty()) {
+            Glide.with(this)
+                .load(pictureUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_user_placeholder_km)
+                .error(R.drawable.ic_user_placeholder_km)
+                .into(binding.storyDisplayProfilePicture)
+        } else {
+            binding.storyDisplayProfilePicture.setImageResource(R.drawable.ic_user_placeholder_km)
+        }
     }
 
     private fun setupMoreMenu() {

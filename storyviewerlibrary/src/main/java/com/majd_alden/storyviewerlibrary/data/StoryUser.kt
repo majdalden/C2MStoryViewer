@@ -5,12 +5,14 @@ import android.os.Parcelable
 import com.google.gson.Gson
 
 data class StoryUser(
+    val phone: String,
     val username: String,
     val profilePicUrl: String,
     val stories: MutableList<Story>,
     val isShowMoreMenu: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        phone = parcel.readString() ?: "",
         username = parcel.readString() ?: "",
         profilePicUrl = parcel.readString() ?: "",
         stories = Gson().fromJson(
@@ -20,6 +22,7 @@ data class StoryUser(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(phone)
         parcel.writeString(username)
         parcel.writeString(profilePicUrl)
         parcel.writeString(Gson().toJson(stories.toTypedArray()))

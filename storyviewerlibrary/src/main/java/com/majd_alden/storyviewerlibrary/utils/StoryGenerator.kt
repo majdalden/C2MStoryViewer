@@ -87,6 +87,7 @@ object StoryGenerator {
             }
             storyUserList.add(
                 StoryUser(
+                "",
                     "username$i",
                     userProfileUrls[Random.nextInt(userProfileUrls.size)],
                     stories,
@@ -223,6 +224,7 @@ object StoryGenerator {
         storyUserList.add(
             0,
             StoryUser(
+            "",
                 "username$0",
                 userProfileUrls[Random.nextInt(userProfileUrls.size)],
                 stories,
@@ -288,8 +290,10 @@ object StoryGenerator {
         storyUserList.add(
             0,
             StoryUser(
+                "",
                 "username$0",
-                "https://randomuser.me/api/portraits/women/1.jpg",
+//                "https://randomuser.me/api/portraits/women/1.jpg",
+                "",
                 mutableListOf(story, story1),
                 true
             )

@@ -14,7 +14,6 @@
 
     <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
         <item name="cornerSize">50%</item>
-        <item name="backgroundColor">@android:color/darker_gray</item>
     </style>
 
 </resources>
