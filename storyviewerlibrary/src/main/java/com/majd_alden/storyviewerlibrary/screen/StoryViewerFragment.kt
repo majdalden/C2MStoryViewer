@@ -308,10 +308,10 @@ class StoryViewerFragment : Fragment(),
 
             val delay = System.currentTimeMillis()
             lifecycleScope.launch(Dispatchers.IO) {
-                Log.e(TAG, "lifecycleScope.launch: onImagePrepared: $onImagePrepared")
+                Log.e(TAG, "${counter}-lifecycleScope.launch: onImagePrepared: $onImagePrepared")
                 delay(1500L)
                 withContext(Dispatchers.Main) {
-                    Log.e(TAG, "withContext: onImagePrepared: $onImagePrepared")
+                    Log.e(TAG, "${counter}-withContext: onImagePrepared: $onImagePrepared")
                     if (!onImagePrepared) {
                         toggleLoadMode(true)
                     }
@@ -328,8 +328,8 @@ class StoryViewerFragment : Fragment(),
                         isFirstResource: Boolean
                     ): Boolean {
                         if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Glide onLoadFailed Error Message: ${e?.message}")
-                            Log.e(TAG, "Glide onLoadFailed Error Exception: ", e)
+                            Log.e(TAG, "${counter}-Glide onLoadFailed Error Message: ${e?.message}")
+                            Log.e(TAG, "${counter}-Glide onLoadFailed Error Exception: ", e)
                             e?.printStackTrace()
                         }
                         binding.storyDisplayVideoProgress.hide()
