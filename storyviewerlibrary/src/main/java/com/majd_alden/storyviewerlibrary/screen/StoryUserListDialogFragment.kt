@@ -52,7 +52,21 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = this@StoryUserListDialogFragment.adapter
 
-//            this@StoryUserListDialogFragment.adapter.models.add()
+            /*this@StoryUserListDialogFragment.adapter.models.add(StoryViewer(
+                phone = "972597190510",
+                pictureUrl = "",
+                viewDate = "2022-08-24T04:17:13.127",
+                fullName = "Kareem Android"
+            ))
+
+            this@StoryUserListDialogFragment.adapter.models.add(StoryViewer(
+                phone = "970567464784",
+                pictureUrl = "https://app.hony.us/account/picture/317d9a5b6de4451090ae7de5efc77ff2.jpg",
+                viewDate = "2022-08-23T15:16:22.113",
+                fullName = "MO MO"
+            ))
+
+            adapter?.notifyDataSetChanged()*/
         }
     }
 

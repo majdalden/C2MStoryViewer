@@ -11,6 +11,7 @@
         android:id="@+id/image"
         android:layout_width="@dimen/_32sdp"
         android:layout_height="@dimen/_32sdp"
+        android:background="@android:color/darker_gray"
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
         tools:srcCompat="@drawable/ic_user_placeholder_km" />
