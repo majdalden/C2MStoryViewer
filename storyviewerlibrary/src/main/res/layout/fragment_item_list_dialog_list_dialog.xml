@@ -4,15 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/_4sdp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semi_bold"
+        android:includeFontPadding="false"
         android:padding="10dp"
         android:text="@string/audiences"
         android:textColor="@color/black"
-        android:textSize="16sp" />
+        android:textSize="@dimen/_14sdp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/audiencesListRV"

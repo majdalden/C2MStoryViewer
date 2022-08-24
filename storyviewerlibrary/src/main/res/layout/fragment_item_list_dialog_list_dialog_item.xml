@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="@dimen/_8sdp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
@@ -38,11 +38,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginHorizontal="5dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="@color/ios_like_grey"
-        android:textSize="14sp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:fontFamily="@font/poppins_regular"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11sdp"
         tools:text="Hello" />
 
 

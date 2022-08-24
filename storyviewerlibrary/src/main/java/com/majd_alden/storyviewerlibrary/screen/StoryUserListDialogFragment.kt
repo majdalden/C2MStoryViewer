@@ -88,12 +88,33 @@ class StoryUserListDialogFragment : BottomSheetDialogFragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.text.text = models[position].phone
-            models[position].pictureUrl.let {
-                Glide.with(holder.image)
-                    .load(it)
+            val context = context ?: return
+
+            val item = models[position]
+            val phone = item.phone.trim()
+            val fullName = item.fullName.trim()
+            val pictureUrl = item.pictureUrl.trim()
+
+            holder.text.text = fullName.ifEmpty { phone }
+
+            if (pictureUrl.isNotEmpty()) {
+                Glide.with(context)
+                    .load(pictureUrl)
                     .placeholder(R.drawable.ic_user_placeholder_km)
                     .error(R.drawable.ic_user_placeholder_km)
+                    .into(holder.image)
+
+                /*Glide.with(holder.image)
+                   .load(pictureUrl)
+                   .placeholder(R.drawable.ic_user_placeholder_km)
+                   .error(R.drawable.ic_user_placeholder_km)*/
+
+                /*pictureUrl.let {
+                    Glide.with(holder.image)
+                        .load(it)
+                        .placeholder(R.drawable.ic_user_placeholder_km)
+                        .error(R.drawable.ic_user_placeholder_km)
+                }*/
             }
         }
 
