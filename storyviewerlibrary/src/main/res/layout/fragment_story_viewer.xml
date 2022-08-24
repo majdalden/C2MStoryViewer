@@ -101,11 +101,20 @@
             android:padding="4dp"
             app:layout_constraintTop_toBottomOf="@+id/storiesProgressView">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <!--<androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/storyDisplayProfilePicture"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:layout_margin="8dp" />
+                android:layout_margin="8dp" />-->
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/storyDisplayProfilePicture"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_margin="8dp"
+                android:background="@android:color/darker_gray"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+                tools:srcCompat="@drawable/ic_user_placeholder_km" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
